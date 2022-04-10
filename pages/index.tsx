@@ -89,7 +89,7 @@ export default function Home() {
           setConfigs(resp.data.data.getPages);
     });
     getGroupNames().then(resp => {
-        if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames.names && resp.data.data.getGroupNames.names)
+        if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
             setGroupNames(resp.data.data.getGroupNames.names);
     });
   }, []);

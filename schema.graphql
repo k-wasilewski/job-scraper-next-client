@@ -1,3 +1,9 @@
+type NewJob {
+    timestamp: String
+    link: String
+}
+
 type Subscription {
     scrapesPerformed: String[]
+    newJobs: NewJob[]
 }
