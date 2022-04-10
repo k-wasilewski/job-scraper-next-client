@@ -1,5 +1,5 @@
 {
-  "name": "next-app",
+  "name": "job-scraper-next-client",
   "private": true,
   "scripts": {
     "dev": "next dev",
