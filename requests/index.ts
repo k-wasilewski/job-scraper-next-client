@@ -43,7 +43,7 @@ const removeScrapeConfigData = (id: number) => {
     return { "query": `mutation { deletePage(id: ${id}) { id, host, path, jobAnchorSelector, jobLinkContains, numberOfPages, interval } }`};
 }
 
-const getRemoveScreenshotData = (group: string, uuid: string) => {
+const getRemoveJobData = (group: string, uuid: string) => {
     return { "query": `mutation { removeScreenshotByGroupAndUuid(groupName: \"${group}\", uuid: \"${uuid}\") { deleted } }`};
 }
 
@@ -67,14 +67,14 @@ export const getScrapeConfigs = () => {
     return axios.post(SPRING_SERVER_ENDPOINT, getScrapeConfigsData());
 }
 
-export const getGroupNames = () => {
+export const getJobGroupNames = () => {
     return axios.post(APOLLO_SERVER_ENDPOINT, getGroupNamesData());
 }
 
-export const getScreenshotsByGroup = (group: string) => {
+export const getJobsByGroup = (group: string) => {
     return axios.post(APOLLO_SERVER_ENDPOINT, getScreenshotsData(group));
 }
 
-export const removeScreenshotByGroupAndUuid = (group: string, uuid: string) => {
-    return axios.post(APOLLO_SERVER_ENDPOINT, getRemoveScreenshotData(group, uuid));
+export const removeJobByGroupAndUuid = (group: string, uuid: string) => {
+    return axios.post(APOLLO_SERVER_ENDPOINT, getRemoveJobData(group, uuid));
 }

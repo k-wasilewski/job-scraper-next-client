@@ -2,16 +2,15 @@ import React, {useEffect, useState} from "react";
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {
-    getGroupNames,
-    getScrapeConfigs, getScreenshotsByGroup, modifyScrapeConfig,
-    persistScrapeConfig, removeScrapeConfig, removeScreenshotByGroupAndUuid,
+    getJobGroupNames, getJobsByGroup, getScrapeConfigs, modifyScrapeConfig,
+    persistScrapeConfig, removeJobByGroupAndUuid, removeScrapeConfig,
     scrape,
 } from "../requests";
 import {ApolloProvider} from "@apollo/client";
 import apollo_client2 from "../apollo_client2";
-import SpringServerHealthcheck from "../components/SpringServerHealthcheck";
+import SpringServerHeartbeat from "../components/SpringServerHeartbeat";
 import apollo_client from "../apollo_client";
-import NodeServerHealthcheck from "../components/NodeServerHealthcheck";
+import NodeServerHeartbeat from "../components/NodeServerHeartbeat";
 import {createWrapperAndAppendToBody, ImageGallery} from "../components/ImageGallery";
 import ReactDOM from "react-dom";
 //TODO: authorization -> dashboard = config + results and handling 2x notifications
@@ -37,10 +36,28 @@ export default function Home() {
   const [configs, setConfigs] = useState([]);
   const [groupNames, setGroupNames] = useState([]);
   const [activeGroup, setActiveGroup] = useState('');
-  const [screenshots, setScreenshots] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [loadingScreenshots, setLoadingScreenshots] = useState(false);
 
   const portalId = 'gallery-portal-container';
+
+  useEffect(() => {
+      if (activeGroup) {
+          const portalWrapper = document.getElementById(portalId);
+          if (!portalWrapper) createWrapperAndAppendToBody(portalId);
+      }
+  }, [activeGroup]);
+
+  useEffect(() => {
+      getScrapeConfigs().then(resp => {
+          if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
+              setConfigs(resp.data.data.getPages);
+      });
+      getJobGroupNames().then(resp => {
+          if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
+              setGroupNames(resp.data.data.getGroupNames.names);
+      });
+  }, []);
 
   const renderConfigs = (configs: ScrapeConfig[]) =>
       configs.map((config, i) => (
@@ -52,47 +69,36 @@ export default function Home() {
             <div>Job link contains: {config.jobLinkContains}</div>
             <div>Number of pages: {config.numberOfPages}</div>
             <div>Interval [ms]: {config.interval}</div>
-            <button onClick={() => handleDelete(config.id)}>Delete config at Spring</button>
+            <button onClick={() => handleDeleteConfig(config.id)}>Delete config at Spring</button>
           </div>
       ));
 
-  const renderScreenshotsGroups = (groupNames: string[]) =>
+  const renderJobGroups = (groupNames: string[]) =>
       groupNames.map((group, i) =>
-          <button key={i} onClick={() => handleGroupChange(group)}>{group}</button>
+          <button key={i} onClick={() => handleJobGroupChange(group)}>{group}</button>
       );
 
-  const handleGroupChange = (group: string) => {
+  const handleJobGroupChange = (group: string) => {
       setLoadingScreenshots(true);
-      getScreenshotsByGroup(group).then(resp => {
+      getJobsByGroup(group).then(resp => {
           if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.files && resp.data.data.getScreenshotsByGroup.files.length) {
-              setScreenshots(resp.data.data.getScreenshotsByGroup.files);
+              setJobs(resp.data.data.getScreenshotsByGroup.files);
               setActiveGroup(group);
               setLoadingScreenshots(false);
           }
       });
   }
 
-    const removeScreenshot = (uuid: string) => {
-      removeScreenshotByGroupAndUuid(activeGroup, uuid);
+  const removeJob = (uuid: string) => {
+      removeJobByGroupAndUuid(activeGroup, uuid).then(resp => {
+          if (resp.status === 200 && resp.data.data && resp.data.data.removeScreenshotByGroupAndUuid && resp.data.data.removeScreenshotByGroupAndUuid.deleted) {
+              getJobGroupNames().then(resp => {
+                  if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
+                      setGroupNames(resp.data.data.getGroupNames.names);
+              });
+          }
+      });
     }
-
-    useEffect(() => {
-        if (activeGroup) {
-            const portalWrapper = document.getElementById(portalId);
-            if (!portalWrapper) createWrapperAndAppendToBody(portalId);
-        }
-    }, [activeGroup]);
-
-  useEffect(() => {
-    getScrapeConfigs().then(resp => {
-      if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
-          setConfigs(resp.data.data.getPages);
-    });
-    getGroupNames().then(resp => {
-        if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
-            setGroupNames(resp.data.data.getGroupNames.names);
-    });
-  }, []);
 
   const handleScrape = () => {
     scrape(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages)).then(resp => {
@@ -100,19 +106,24 @@ export default function Home() {
     }).catch(e => console.log(e));
   }
 
-  const handleAdd = () => {
+  const handleAddConfig = () => {
     persistScrapeConfig(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval)).then(resp => {
       if (resp.status === 200 && resp.data.data && resp.data.data.addPage) alert('done!');
     }).catch(e => console.log(e));
   }
 
-  const handleDelete = (id: number) => {
+  const handleDeleteConfig = (id: number) => {
     removeScrapeConfig(id).then(resp => {
-      if (resp.status === 200 && resp.data.data && resp.data.data.addPage) alert('done!');
+      if (resp.status === 200 && resp.data.data && resp.data.data.addPage) {
+          getScrapeConfigs().then(resp => {
+              if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
+                  setConfigs(resp.data.data.getPages);
+          });
+      }
     }).catch(e => console.log(e));
   }
 
-  const handleModify = () => {
+  const handleModifyConfig = () => {
     modifyScrapeConfig(parseInt(id), host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval)).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.modifyPage) alert('done!');
     }).catch(e => console.log(e));
@@ -121,21 +132,21 @@ export default function Home() {
   return (
       <div className={styles.container}>
         <Head>
-          <title>{'next.js <- gql -> apollo server'}</title>
+          <title>{'Job Scraper'}</title>
           <meta name="description" content="Generated by create next app" />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
         <main>
 
-          Scrapes performed at:
+          Latest scrape performed at:
           <ApolloProvider client={apollo_client2}>
-            <SpringServerHealthcheck />
+            <SpringServerHeartbeat />
           </ApolloProvider>
 
-          New jobs found:
+          Latest new job discovered:
           <ApolloProvider client={apollo_client}>
-            <NodeServerHealthcheck />
+            <NodeServerHeartbeat />
           </ApolloProvider>
 
           <h2>Add/edit config:</h2>
@@ -147,26 +158,26 @@ export default function Home() {
           Number of pages: <input type={'text'} onChange={e => setNumberOfPages(e.target.value)}/>
           Interval [ms]: <input type={'text'} onChange={e => setInterval(e.target.value)}/><br/>
           <button onClick={handleScrape}>Scrape with Node</button>
-          <button onClick={handleAdd}>Add config at Spring</button>
-          <button onClick={handleModify}>Modify config at Spring</button>
+          <button onClick={handleAddConfig}>Add config at Spring</button>
+          <button onClick={handleModifyConfig}>Modify config at Spring</button>
 
           <h2>Configs:</h2>
           {renderConfigs(configs)}
 
-          <h2>Screenshots:</h2>
-          {renderScreenshotsGroups(groupNames)}
+          <h2>Jobs:</h2>
+          {renderJobGroups(groupNames)}
 
           <br/>
           <br/>
             {loadingScreenshots ? <span>Loading...</span> : process.browser && document.getElementById(portalId) && ReactDOM.createPortal(
                 <ImageGallery
-                    images={screenshots.map(screenshot => ({
-                        src: `http://localhost:8080/screenshots/${activeGroup}/${screenshot}.png`,
-                        onDelete: () => removeScreenshot(screenshot)
+                    images={jobs.map(uuid => ({
+                        src: `http://localhost:8080/screenshots/${activeGroup}/${uuid}.png`,
+                        onDelete: () => removeJob(uuid)
                     }))}
                     disactive={() => {
                         setActiveGroup('')
-                        setScreenshots([]);
+                        setJobs([]);
                     }}
                 />,
                 document.getElementById(portalId)
