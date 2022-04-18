@@ -1,18 +1,6 @@
 import React, {useLayoutEffect, useRef, useState} from "react";
 import arrowLeft from '../public/arrow_left.png';
 
-export const createWrapperAndAppendToBody = (wrapperId) => {
-    const wrapperElement = document.createElement('div');
-    wrapperElement.setAttribute('style', `
-        position: absolute;
-        top: 0;
-        width: 99vw;
-    `);
-    wrapperElement.setAttribute("id", wrapperId);
-    document.body.appendChild(wrapperElement);
-    return wrapperElement;
-}
-
 export const ImageGallery = (props: ImageGalleryProps) => {
     const { images, disactive } = props;
     const [currentIndex, setCurrentIndex] = useState(0);

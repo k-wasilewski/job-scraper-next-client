@@ -11,8 +11,10 @@ import apollo_client2 from "../apollo_client2";
 import SpringServerHeartbeat from "../components/SpringServerHeartbeat";
 import apollo_client from "../apollo_client";
 import NodeServerHeartbeat from "../components/NodeServerHeartbeat";
-import {createWrapperAndAppendToBody, ImageGallery} from "../components/ImageGallery";
+import {ImageGallery} from "../components/ImageGallery";
+import {createWrapperAndAppendToBody} from "../utils/createPortal";
 import ReactDOM from "react-dom";
+import {Popup} from "../components/Popup";
 //TODO: authorization -> dashboard = config + results and handling 2x notifications
 
 interface ScrapeConfig {
@@ -38,15 +40,10 @@ export default function Home() {
   const [activeGroup, setActiveGroup] = useState('');
   const [jobs, setJobs] = useState([]);
   const [loadingScreenshots, setLoadingScreenshots] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
 
-  const portalId = 'gallery-portal-container';
-
-  useEffect(() => {
-      if (activeGroup) {
-          const portalWrapper = document.getElementById(portalId);
-          if (!portalWrapper) createWrapperAndAppendToBody(portalId);
-      }
-  }, [activeGroup]);
+  const galleryPortalId = 'gallery-portal-container';
+  const popupPortalId = 'popup-portal-container';
 
   useEffect(() => {
       getScrapeConfigs().then(resp => {
@@ -58,6 +55,20 @@ export default function Home() {
               setGroupNames(resp.data.data.getGroupNames.names);
       });
   }, []);
+
+  useEffect(() => {
+    if (activeGroup) {
+        const portalWrapper = document.getElementById(galleryPortalId);
+        if (!portalWrapper) createWrapperAndAppendToBody(galleryPortalId);
+    }
+  }, [activeGroup]);
+
+  useEffect(() => {
+      if (popupMessage) {
+          const portalWrapper = document.getElementById(popupPortalId);
+          if (!portalWrapper) createWrapperAndAppendToBody(popupPortalId);
+      }
+  }, [popupMessage]);
 
   const renderConfigs = (configs: ScrapeConfig[]) =>
       configs.map((config, i) => (
@@ -108,7 +119,7 @@ export default function Home() {
 
   const handleAddConfig = () => {
     persistScrapeConfig(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval)).then(resp => {
-      if (resp.status === 200 && resp.data.data && resp.data.data.addPage) alert('done!');
+      if (resp.status === 200 && resp.data.data && resp.data.data.addPage) setPopupMessage('Config added successfully');
     }).catch(e => console.log(e));
   }
 
@@ -118,6 +129,7 @@ export default function Home() {
           getScrapeConfigs().then(resp => {
               if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
                   setConfigs(resp.data.data.getPages);
+              setPopupMessage('Config removed successfully');
           });
       }
     }).catch(e => console.log(e));
@@ -125,10 +137,10 @@ export default function Home() {
 
   const handleModifyConfig = () => {
     modifyScrapeConfig(parseInt(id), host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval)).then(resp => {
-        if (resp.status === 200 && resp.data.data && resp.data.data.modifyPage) alert('done!');
+        if (resp.status === 200 && resp.data.data && resp.data.data.modifyPage) setPopupMessage('Config modified successfully');
     }).catch(e => console.log(e));
   }
-
+if (process.browser) console.log(document.getElementById(popupPortalId))
   return (
       <div className={styles.container}>
         <Head>
@@ -157,9 +169,9 @@ export default function Home() {
           Job link contains: <input type={'text'} onChange={e => setJobLinkContains(e.target.value)}/>
           Number of pages: <input type={'text'} onChange={e => setNumberOfPages(e.target.value)}/>
           Interval [ms]: <input type={'text'} onChange={e => setInterval(e.target.value)}/><br/>
-          <button onClick={handleScrape}>Scrape with Node</button>
-          <button onClick={handleAddConfig}>Add config at Spring</button>
-          <button onClick={handleModifyConfig}>Modify config at Spring</button>
+          <button onClick={handleScrape}>Scrape now!</button>
+          <button onClick={handleAddConfig}>Add config</button>
+          <button onClick={handleModifyConfig}>Modify config</button>
 
           <h2>Configs:</h2>
           {renderConfigs(configs)}
@@ -169,7 +181,7 @@ export default function Home() {
 
           <br/>
           <br/>
-            {loadingScreenshots ? <span>Loading...</span> : process.browser && document.getElementById(portalId) && ReactDOM.createPortal(
+            {loadingScreenshots ? <span>Loading...</span> : process.browser && document.getElementById(galleryPortalId) && ReactDOM.createPortal(
                 <ImageGallery
                     images={jobs.map(uuid => ({
                         src: `http://localhost:8080/screenshots/${activeGroup}/${uuid}.png`,
@@ -180,7 +192,14 @@ export default function Home() {
                         setJobs([]);
                     }}
                 />,
-                document.getElementById(portalId)
+                document.getElementById(galleryPortalId)
+            )}
+            {popupMessage && process.browser && document.getElementById(popupPortalId) && ReactDOM.createPortal(
+                <Popup
+                    message={popupMessage}
+                    onClose={() => setPopupMessage('')}
+                />,
+                document.getElementById(popupPortalId)
             )}
 
         </main>
