@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+import {Definintion} from "./apollo_client";
 
 const httpLink = new HttpLink({
     uri: 'http://localhost:8081/graphql',
@@ -15,7 +16,7 @@ const wsLink = process.browser ? new WebSocketLink({
 
 const link = process.browser ? split(
     ({ query }) => {
-        const { kind, operation } = getMainDefinition(query);
+        const { kind, operation }: Definintion = getMainDefinition(query);
         return kind === 'OperationDefinition' && operation === 'subscription';
     },
     wsLink,
