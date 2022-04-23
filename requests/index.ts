@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const APOLLO_SERVER_ENDPOINT = "http://localhost:8080/graphql";
+const NODE_SERVER_ENDPOINT = "http://localhost:8080/graphql";
 const SPRING_SERVER_ENDPOINT = "http://localhost:8081/graphql";
 
 const getScrapeData = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {
@@ -48,7 +48,7 @@ const getRemoveJobData = (group: string, uuid: string) => {
 }
 
 export const scrape = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {
-    return axios.post(APOLLO_SERVER_ENDPOINT, getScrapeData(host, path, jobAnchorSelector, jobLinkContains, numberOfPages));
+    return axios.post(NODE_SERVER_ENDPOINT, getScrapeData(host, path, jobAnchorSelector, jobLinkContains, numberOfPages));
 }
 
 export const persistScrapeConfig = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number, interval: number) => {
@@ -68,13 +68,13 @@ export const getScrapeConfigs = () => {
 }
 
 export const getJobGroupNames = () => {
-    return axios.post(APOLLO_SERVER_ENDPOINT, getGroupNamesData());
+    return axios.post(NODE_SERVER_ENDPOINT, getGroupNamesData());
 }
 
 export const getJobsByGroup = (group: string) => {
-    return axios.post(APOLLO_SERVER_ENDPOINT, getScreenshotsData(group));
+    return axios.post(NODE_SERVER_ENDPOINT, getScreenshotsData(group));
 }
 
 export const removeJobByGroupAndUuid = (group: string, uuid: string) => {
-    return axios.post(APOLLO_SERVER_ENDPOINT, getRemoveJobData(group, uuid));
+    return axios.post(NODE_SERVER_ENDPOINT, getRemoveJobData(group, uuid));
 }
