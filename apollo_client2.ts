@@ -2,13 +2,14 @@ import { ApolloClient, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import {Definintion} from "./apollo_client";
+import {SPRING_SERVER_ENDPOINT, SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
 
 const httpLink = new HttpLink({
-    uri: 'http://localhost:8081/graphql',
+    uri: SPRING_SERVER_ENDPOINT,
 });
 
 const wsLink = process.browser ? new WebSocketLink({
-    uri: 'ws://localhost:8081/subscriptions',
+    uri: SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT,
     options: {
         reconnect: true
     },

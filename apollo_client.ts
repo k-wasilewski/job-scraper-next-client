@@ -1,6 +1,7 @@
 import { ApolloClient, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
+import {NODE_SERVER_ENDPOINT, NODE_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
 
 export interface Definintion {
     kind: string;
@@ -8,11 +9,11 @@ export interface Definintion {
 };
 
 const httpLink = new HttpLink({
-    uri: 'http://localhost:8080/graphql',
+    uri: NODE_SERVER_ENDPOINT,
 });
 
 const wsLink = process.browser ? new WebSocketLink({
-    uri: 'ws://localhost:8080/subscriptions',
+    uri: NODE_SERVER_SUBSCRIPTIONS_ENDPOINT,
     options: {
         reconnect: true
     },

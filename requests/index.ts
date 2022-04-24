@@ -1,7 +1,12 @@
 import axios from "axios";
 
-const NODE_SERVER_ENDPOINT = "http://localhost:8080/graphql";
-const SPRING_SERVER_ENDPOINT = "http://localhost:8081/graphql";
+export const NODE_SERVER_HOST = "localhost:8080";
+export const SPRING_SERVER_HOST = "localhost:8081";
+
+export const NODE_SERVER_ENDPOINT = "http://" + NODE_SERVER_HOST + "/graphql";
+export const SPRING_SERVER_ENDPOINT =  "http://" + SPRING_SERVER_HOST + "/graphql";
+export const NODE_SERVER_SUBSCRIPTIONS_ENDPOINT = "ws:/" + NODE_SERVER_HOST + "/subscriptions";
+export const SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT = "ws://" + SPRING_SERVER_HOST + "/graphql";
 
 const getScrapeData = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {
     const _host = host.replace(/"/g, '&quot');

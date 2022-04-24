@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {
-    getJobGroupNames, getJobsByGroup, getScrapeConfigs, modifyScrapeConfig,
+    getJobGroupNames, getJobsByGroup, getScrapeConfigs, modifyScrapeConfig, NODE_SERVER_HOST,
     persistScrapeConfig, removeJobByGroupAndUuid, removeScrapeConfig,
     scrape,
 } from "../requests";
@@ -184,7 +184,7 @@ if (process.browser) console.log(document.getElementById(popupPortalId))
             {loadingScreenshots ? <span>Loading...</span> : process.browser && document.getElementById(galleryPortalId) && ReactDOM.createPortal(
                 <ImageGallery
                     images={jobs.map(uuid => ({
-                        src: `http://localhost:8080/screenshots/${activeGroup}/${uuid}.png`,
+                        src: `http://${NODE_SERVER_HOST}/screenshots/${activeGroup}/${uuid}.png`,
                         onDelete: () => removeJob(uuid)
                     }))}
                     disactive={() => {
