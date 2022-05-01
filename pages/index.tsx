@@ -15,7 +15,6 @@ import {ImageGallery} from "../components/ImageGallery";
 import {createWrapperAndAppendToBody} from "../utils/createPortal";
 import ReactDOM from "react-dom";
 import {Popup} from "../components/Popup";
-//TODO: authorization -> dashboard = config + results and handling 2x notifications
 
 interface ScrapeConfig {
     id: number;
