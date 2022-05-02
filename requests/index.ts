@@ -40,6 +40,10 @@ const getGroupNamesData = () => {
     return { "query": "{ getGroupNames { names } }"};
 }
 
+const getIsAuthorizedData = () => {
+    return { "query": "{ verify { user { uuid, email } } }"};
+}
+
 const getScreenshotsData = (groupName: string) => {
     return { "query": `{ getScreenshotsByGroup(groupName: \"${groupName}\") { files } }`};
 }
@@ -50,6 +54,14 @@ const removeScrapeConfigData = (id: number) => {
 
 const getRemoveJobData = (group: string, uuid: string) => {
     return { "query": `mutation { removeScreenshotByGroupAndUuid(groupName: \"${group}\", uuid: \"${uuid}\") { deleted } }`};
+}
+
+const getLoginData = (email: string, password: string) => {
+    return { "query": `mutation { login(email: \"${email}\", password: \"${password}\") { success, error { message }, token, user { email } } }`};
+}
+
+const getRegisterData = (email: string, password: string) => {
+    return { "query": `mutation { register(email: \"${email}\", password: \"${password}\") { success, error { message }, token, user { email } } }`};
 }
 
 export const scrape = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {
@@ -83,3 +95,25 @@ export const getJobsByGroup = (group: string) => {
 export const removeJobByGroupAndUuid = (group: string, uuid: string) => {
     return axios.post(NODE_SERVER_ENDPOINT, getRemoveJobData(group, uuid));
 }
+
+export const isAuthorized = () => {
+    return axios.post(NODE_SERVER_ENDPOINT, getIsAuthorizedData())
+        .then(resp => resp.data.data.verify.user !== undefined)
+        .catch(err => false);
+}
+
+export const login = (email: string, password: string) => {
+    return axios.post(NODE_SERVER_ENDPOINT, getLoginData(email, password));
+}
+
+export const register = (email: string, password: string) => {
+    return axios.post(NODE_SERVER_ENDPOINT, getRegisterData(email, password));
+}
+
+axios.interceptors.request.use((config) => {
+    if (config.url.includes(NODE_SERVER_ENDPOINT)) {
+        const token = sessionStorage.getItem('authToken');
+        config.headers.Authorization =  token ? `Bearer ${token}` : '';
+    }
+    return config;
+});
