@@ -27,7 +27,7 @@ interface ScrapeConfig {
     interval: number;
 }
 
-export default function home() {
+export default function Home() {
     const [id, setId] = useState('');
     const [host, setHost] = useState('');
     const [path, setPath] = useState('');
