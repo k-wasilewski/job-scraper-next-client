@@ -15,7 +15,10 @@ const httpLink = new HttpLink({
 const wsLink = process.browser ? new WebSocketLink({
     uri: NODE_SERVER_SUBSCRIPTIONS_ENDPOINT,
     options: {
-        reconnect: true
+        reconnect: true,
+        connectionParams: () => ({
+            token: `Bearer ${sessionStorage.getItem('authToken')}`
+        })
     },
 }) : null;
 
