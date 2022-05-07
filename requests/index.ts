@@ -98,7 +98,7 @@ export const removeJobByGroupAndUuid = (group: string, uuid: string) => {
 
 export const isAuthorized = () => {
     return axios.post(NODE_SERVER_ENDPOINT, getIsAuthorizedData())
-        .then(resp => resp.data.data.verify.user !== undefined)
+        .then(resp => resp.data.data.verify.user !== null)
         .catch(err => false);
 }
 
