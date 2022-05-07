@@ -115,6 +115,7 @@ export default function Home() {
     const removeJob = (uuid: string) => {
         removeJobByGroupAndUuid(activeGroup, uuid).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeScreenshotByGroupAndUuid && resp.data.data.removeScreenshotByGroupAndUuid.deleted) {
+                setPopupMessage('Job removed successfully');
                 getJobGroupNames().then(resp => {
                     if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
                         setGroupNames(resp.data.data.getGroupNames.names);
@@ -125,7 +126,7 @@ export default function Home() {
 
     const handleScrape = () => {
         scrape(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages)).then(resp => {
-            if (resp.status === 200 && resp.data.data && resp.data.data.scrape && resp.data.data.scrape.complete) alert('done!');
+            if (resp.status === 200 && resp.data.data && resp.data.data.scrape && resp.data.data.scrape.complete) setPopupMessage('Scrape performed successfully');
         }).catch(e => console.log(e));
     }
 
@@ -139,9 +140,10 @@ export default function Home() {
         removeScrapeConfig(id).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.addPage) {
                 getScrapeConfigs().then(resp => {
-                    if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
+                    if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length) {
                         setConfigs(resp.data.data.getPages);
-                    setPopupMessage('Config removed successfully');
+                        setPopupMessage('Config removed successfully');
+                    }
                 });
             }
         }).catch(e => console.log(e));
