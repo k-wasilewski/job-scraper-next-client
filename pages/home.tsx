@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {
-    getJobGroupNames, getJobsByGroup, getScrapeConfigs, isAuthorized, modifyScrapeConfig, NODE_SERVER_HOST,
-    persistScrapeConfig, removeJobByGroupAndUuid, removeScrapeConfig,
+    getJobGroupNames, getJobsByGroup, getScrapeConfigs, modifyScrapeConfig, NODE_SERVER_HOST,
+    persistScrapeConfig, removeJobByGroupAndUuid, removeJobGroupByName, removeScrapeConfig,
     scrape,
 } from "../requests";
 import {ApolloProvider} from "@apollo/client";
@@ -16,8 +16,9 @@ import {createWrapperAndAppendToBody} from "../utils/createPortal";
 import ReactDOM from "react-dom";
 import {Popup} from "../components/Popup";
 import { useRouter } from "next/router";
+import {NextPage} from "next";
 
-interface ScrapeConfig {
+export interface ScrapeConfig {
     id: number;
     host: string;
     path: string;
@@ -27,7 +28,14 @@ interface ScrapeConfig {
     interval: number;
 }
 
-export default function Home() {
+export interface HomeProps {
+    _auth: boolean;
+    _configs: ScrapeConfig[];
+    _groupNames: string[];
+}
+
+const Home: NextPage<HomeProps> = (props: HomeProps) => {
+    const { _auth, _configs, _groupNames } = props;
     const [id, setId] = useState('');
     const [host, setHost] = useState('');
     const [path, setPath] = useState('');
@@ -35,8 +43,8 @@ export default function Home() {
     const [jobLinkContains, setJobLinkContains] = useState('');
     const [numberOfPages, setNumberOfPages] = useState('');
     const [interval, setInterval] = useState('');
-    const [configs, setConfigs] = useState([]);
-    const [groupNames, setGroupNames] = useState([]);
+    const [configs, setConfigs] = useState(_configs);
+    const [groupNames, setGroupNames] = useState(_groupNames);
     const [activeGroup, setActiveGroup] = useState('');
     const [jobs, setJobs] = useState([]);
     const [loadingScreenshots, setLoadingScreenshots] = useState(false);
@@ -48,20 +56,8 @@ export default function Home() {
     const router = useRouter();
 
     useEffect(() => {
-        const redirectIfNotAuthorized = async () => {
-            const isUserAuthorized = await isAuthorized();
-            if (!isUserAuthorized) await router.replace('/login');
-        }
-        redirectIfNotAuthorized();
-        getScrapeConfigs().then(resp => {
-            if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
-                setConfigs(resp.data.data.getPages);
-        }).catch(e => console.log(e));
-        getJobGroupNames().then(resp => {
-            if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
-                setGroupNames(resp.data.data.getGroupNames.names);
-        }).catch(e => console.log(e));
-    }, []);
+        if (!_auth) router.replace('/login');
+    }, [router, _auth]);
 
     useEffect(() => {
         if (activeGroup) {
@@ -78,12 +74,11 @@ export default function Home() {
     }, [popupMessage]);
 
     const logout = () => {
-        sessionStorage.removeItem('authToken');
         router.replace('/login');
     }
 
     const renderConfigs = (configs: ScrapeConfig[]) =>
-        configs.map((config, i) => (
+        configs && configs.map((config, i) => (
             <div key={i} style={{marginBottom: '1rem'}}>
                 <div>Id: {config.id}</div>
                 <div>Host: {config.host}</div>
@@ -97,8 +92,13 @@ export default function Home() {
         ));
 
     const renderJobGroups = (groupNames: string[]) =>
-        groupNames.map((group, i) =>
+        groupNames && groupNames.map((group, i) =>
             <button key={i} onClick={() => handleJobGroupChange(group)}>{group}</button>
+        );
+
+    const renderDeleteJobGroup = (groupNames: string[]) =>
+        groupNames && groupNames.map((group, i) =>
+            <button key={i} onClick={() => removeJobGroup(group)}>{`Delete ${group}`}</button>
         );
 
     const handleJobGroupChange = (group: string) => {
@@ -112,10 +112,21 @@ export default function Home() {
         }).catch(e => console.log(e));
     }
 
+    const removeJobGroup = (groupName: string) => {
+        removeJobGroupByName(groupName).then(resp => {
+            if (resp.status === 200 && resp.data.data && resp.data.data.removeAllScreenshotsByGroup && resp.data.data.removeAllScreenshotsByGroup.deleted) {
+                setPopupMessage(`All jobs of ${groupName} removed successfully`);
+                getJobGroupNames().then(resp => {
+                    if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
+                        setGroupNames(resp.data.data.getGroupNames.names);
+                });
+            }
+        }).catch(e => console.log(e));
+    }
+
     const removeJob = (uuid: string) => {
         removeJobByGroupAndUuid(activeGroup, uuid).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeScreenshotByGroupAndUuid && resp.data.data.removeScreenshotByGroupAndUuid.deleted) {
-                setPopupMessage('Job removed successfully');
                 getJobGroupNames().then(resp => {
                     if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
                         setGroupNames(resp.data.data.getGroupNames.names);
@@ -191,6 +202,9 @@ export default function Home() {
                 <h2>Configs:</h2>
                 {renderConfigs(configs)}
 
+                <h2>Delete jobs:</h2>
+                {renderDeleteJobGroup(groupNames)}
+
                 <h2>Jobs:</h2>
                 {renderJobGroups(groupNames)}
 
@@ -221,3 +235,5 @@ export default function Home() {
         </div>
     )
 }
+
+export default Home;

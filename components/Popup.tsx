@@ -22,7 +22,7 @@ export const Popup = (props: PopupProps) => {
                 onClose();
             }
         });
-    }, []);
+    }, [onClose]);
 
     return (
         <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>

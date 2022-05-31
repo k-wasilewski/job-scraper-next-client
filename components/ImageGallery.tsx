@@ -8,6 +8,14 @@ export const ImageGallery = (props: ImageGalleryProps) => {
     const arrowLeftRef = useRef<HTMLImageElement>();
     const arrowRightRef = useRef<HTMLImageElement>();
 
+    const setPrevImage = () => {
+        setCurrentIndex(currentIndex => (currentIndex <= 0) ? images.length - 1 : currentIndex - 1);
+    };
+
+    const setNextImage = () => {
+        setCurrentIndex(currentIndex => (currentIndex >= images.length - 1) ? 0 : currentIndex + 1);
+    };
+
     useLayoutEffect(() => {
         window.addEventListener('click', (e: MouseEvent) => {
             const targetElement = e.target as HTMLElement;
@@ -26,24 +34,17 @@ export const ImageGallery = (props: ImageGalleryProps) => {
                 disactive();
             }
         });
-    }, []);
-
-    const setPrevImage = () => {
-        setCurrentIndex(currentIndex => (currentIndex <= 0) ? images.length - 1 : currentIndex - 1);
-    };
-
-    const setNextImage = () => {
-        setCurrentIndex(currentIndex => (currentIndex >= images.length - 1) ? 0 : currentIndex + 1);
-    };
+    }, [disactive, images.length, setNextImage, setPrevImage]);
 
     return <>
             {images && images.length ? images.map((image, i) => {
                 if (i===currentIndex) return (
                     <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>
-                        <img ref={arrowLeftRef} onClick={setPrevImage} src={arrowLeft.src} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', left: '1%', cursor: 'pointer'}}/>
-                        <img ref={arrowRightRef} onClick={setNextImage} src={arrowLeft.src} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', right: '1%', cursor: 'pointer', transform: 'scaleX(-1)'}}/>
+                        <img alt='prevImage' onClick={setPrevImage} src={arrowLeft.src} ref={arrowLeftRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', left: '1%', cursor: 'pointer'}} />
+                        <img alt='nextImage' onClick={setNextImage} src={arrowLeft.src} ref={arrowRightRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', right: '1%', cursor: 'pointer', transform: 'scaleX(-1)'}} />
                         <div ref={imgRef} style={{margin: '0 auto', display: 'table'}}>
                             <img
+                                alt={`screenshot-${i}`}
                                 key={i}
                                 src={image.src}
                             />

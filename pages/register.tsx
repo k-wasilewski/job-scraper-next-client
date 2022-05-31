@@ -13,8 +13,7 @@ export default function Register() {
         e.preventDefault();
         register(email, password).then(resp => {
             if (resp.data.errors) throw new Error(resp.data.errors[0].message);
-            if (resp.status === 200 && resp.data.data.register.success && resp.data.data.register.token) {
-                sessionStorage.setItem('authToken', resp.data.data.register.token);
+            if (resp.status === 200 && resp.data.data.register.success) {
                 router.push('/');
             }
         })

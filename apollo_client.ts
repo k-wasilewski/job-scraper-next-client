@@ -10,15 +10,13 @@ export interface Definintion {
 
 const httpLink = new HttpLink({
     uri: NODE_SERVER_ENDPOINT,
+    credentials: 'include'
 });
 
 const wsLink = process.browser ? new WebSocketLink({
     uri: NODE_SERVER_SUBSCRIPTIONS_ENDPOINT,
     options: {
-        reconnect: true,
-        connectionParams: () => ({
-            token: `Bearer ${sessionStorage.getItem('authToken')}`
-        })
+        reconnect: true
     },
 }) : null;
 
@@ -33,6 +31,6 @@ const link = process.browser ? split(
 
 const cache = new InMemoryCache();
 
-const client = new ApolloClient({ link, cache });
+const client = new ApolloClient({ link, cache, credentials: 'include' });
 
 export default client;
