@@ -1,5 +1,4 @@
 import axios from "axios";
-import exp from "constants";
 
 export const NODE_SERVER_HOST = "localhost:8080";
 export const DOCKERIZED_NODE_SERVER_HOST = "job-scraper-node-server:8080";

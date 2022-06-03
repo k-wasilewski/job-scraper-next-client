@@ -213,7 +213,7 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
                 {loadingScreenshots ? <span>Loading...</span> : process.browser && document.getElementById(galleryPortalId) && ReactDOM.createPortal(
                     <ImageGallery
                         images={jobs.map(uuid => ({
-                            src: `http://${NODE_SERVER_HOST}/screenshots/${activeGroup}/${uuid}.png`,
+                            src: `http://${NODE_SERVER_HOST}/screenshots/${router.query.username}/${activeGroup}/${uuid}.png`,
                             onDelete: () => removeJob(uuid)
                         }))}
                         disactive={() => {
