@@ -14,7 +14,10 @@ export default function Register() {
         register(email, password).then(resp => {
             if (resp.data.errors) throw new Error(resp.data.errors[0].message);
             if (resp.status === 200 && resp.data.data.register.success) {
-                router.push('/');
+                router.push({
+                    pathname: '/',
+                    query: { uuid: resp.data.data.register.user.uuid }
+                });
             }
         })
     }
