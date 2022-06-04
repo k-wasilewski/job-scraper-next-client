@@ -16,7 +16,7 @@ export default function Login() {
             if (resp.status === 200 && resp.data.data.login.success) {
                 router.push({
                     pathname: '/',
-                    query: { username: email }
+                    query: { uuid: resp.data.data.login.user.uuid }
                 });
             }
         })

@@ -65,11 +65,11 @@ const getRemoveJobGroupData = (group: string) => {
 }
 
 const getLoginData = (email: string, password: string) => {
-    return { "query": `mutation { login(email: \"${email}\", password: \"${password}\") { success, error { message }, user { email } } }`};
+    return { "query": `mutation { login(email: \"${email}\", password: \"${password}\") { success, error { message }, user { email, uuid } } }`};
 }
 
 const getRegisterData = (email: string, password: string) => {
-    return { "query": `mutation { register(email: \"${email}\", password: \"${password}\") { success, error { message }, user { email } } }`};
+    return { "query": `mutation { register(email: \"${email}\", password: \"${password}\") { success, error { message }, user { email, uuid } } }`};
 }
 
 export const scrape = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {

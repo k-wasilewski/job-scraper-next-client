@@ -16,7 +16,7 @@ export default function Register() {
             if (resp.status === 200 && resp.data.data.register.success) {
                 router.push({
                     pathname: '/',
-                    query: { username: email }
+                    query: { uuid: resp.data.data.register.user.uuid }
                 });
             }
         })
