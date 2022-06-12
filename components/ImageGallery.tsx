@@ -1,12 +1,16 @@
-import React, {useLayoutEffect, useRef, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import arrowLeft from '../public/arrow_left.png';
+import ReactDOM from "react-dom";
+import {createWrapperAndAppendToBody} from "../utils/createPortal";
 
 export const ImageGallery = (props: ImageGalleryProps) => {
-    const { images, disactive } = props;
+    const { images, disactive, loading } = props;
     const [currentIndex, setCurrentIndex] = useState(0);
     const imgRef = useRef<HTMLDivElement>();
     const arrowLeftRef = useRef<HTMLImageElement>();
     const arrowRightRef = useRef<HTMLImageElement>();
+
+    const galleryPortalId = 'gallery-portal-container';
 
     const setPrevImage = () => {
         setCurrentIndex(currentIndex => (currentIndex <= 0) ? images.length - 1 : currentIndex - 1);
@@ -36,30 +40,49 @@ export const ImageGallery = (props: ImageGalleryProps) => {
         });
     }, [disactive, images.length, setNextImage, setPrevImage]);
 
-    return <>
-            {images && images.length ? images.map((image, i) => {
-                if (i===currentIndex) return (
-                    <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>
-                        <img alt='prevImage' onClick={setPrevImage} src={arrowLeft.src} ref={arrowLeftRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', left: '1%', cursor: 'pointer'}} />
-                        <img alt='nextImage' onClick={setNextImage} src={arrowLeft.src} ref={arrowRightRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', right: '1%', cursor: 'pointer', transform: 'scaleX(-1)'}} />
-                        <div ref={imgRef} style={{margin: '0 auto', display: 'table'}}>
-                            <img
-                                alt={`screenshot-${i}`}
-                                key={i}
-                                src={image.src}
-                            />
-                            <br/>
-                            <button style={{margin: '0 auto', display: 'table'}} onClick={() => image.onDelete()}>Delete</button>
-                        </div>
-                    </div>
-                )
-            }) : null}
-        </>;
+    useEffect(() => {
+        if (images.length) {
+            const portalWrapper = document.getElementById(galleryPortalId);
+            if (!portalWrapper) createWrapperAndAppendToBody(galleryPortalId);
+        }
+    }, [images]);
+
+    const galleryContent = (
+      <>
+          {images && images.length ? images.map((image, i) => {
+              if (i===currentIndex) return (
+                  <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>
+                      <img alt='prevImage' onClick={setPrevImage} src={arrowLeft.src} ref={arrowLeftRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', left: '1%', cursor: 'pointer'}} />
+                      <img alt='nextImage' onClick={setNextImage} src={arrowLeft.src} ref={arrowRightRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', right: '1%', cursor: 'pointer', transform: 'scaleX(-1)'}} />
+                      <div ref={imgRef} style={{margin: '0 auto', display: 'table'}}>
+                          <img
+                              alt={`screenshot-${i}`}
+                              key={i}
+                              src={image.src}
+                          />
+                          <br/>
+                          <button style={{margin: '0 auto', display: 'table'}} onClick={() => image.onDelete()}>Delete</button>
+                      </div>
+                  </div>
+              )
+          }) : null}
+      </>
+    );
+
+    return (
+        <>
+            {loading ? <span>Loading...</span> : process.browser && document.getElementById(galleryPortalId) && ReactDOM.createPortal(
+                galleryContent,
+                document.getElementById(galleryPortalId)
+            )}
+        </>
+    );
 }
 
 interface ImageGalleryProps {
     images: Image[];
     disactive: () => void;
+    loading: boolean;
 }
 
 interface Image {

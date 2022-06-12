@@ -4,7 +4,7 @@ import {getJobGroupNames, getScrapeConfigs, isAuthorized} from "../requests";
 export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => {
     let _configs: ScrapeConfig[] = [];
     let _groupNames: string[] = [];
-    let _auth: boolean = false;
+    let _auth: string | null = null;
     await getScrapeConfigs(true, req.headers.cookie).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
             _configs = resp.data.data.getPages;

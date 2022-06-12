@@ -17,16 +17,24 @@ export default function NodeServerHeartbeat() {
         SUBSCRIBE_TO_NEWS
     );
 
-    return loading ?
-        <h4>Loading...</h4>
-        :
-        data ?
-            <h4>
-                {data.newJobs.link}
-                <br/>
-                {data.newJobs.timestamp}
-                <br/>
-            </h4>
+    const subscription_data = (
+        loading ?
+            <h4>Loading...</h4>
             :
-            null;
+            data ?
+                <h4>
+                    {data.newJobs.link}
+                    <br/>
+                    {data.newJobs.timestamp}
+                    <br/>
+                </h4>
+                :
+                null
+    );
+
+    return (
+      <>
+        <span>Latest new job discovered:</span> {subscription_data}
+      </>
+    );
 };

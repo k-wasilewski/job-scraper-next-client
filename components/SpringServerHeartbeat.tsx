@@ -14,14 +14,22 @@ export default function SpringServerHeartbeat() {
         SUBSCRIBE_TO_SCRAPES_PERFORMED
     );
 
-    return loading ?
-        <h4>Loading...</h4>
-        :
-        data ?
-            <h4>
-                {data.scrapesPerformed}
-                <br/>
-            </h4>
+    const subscription_data = (
+        loading ?
+            <h4>Loading...</h4>
             :
-            null;
+            data ?
+                <h4>
+                    {data.scrapesPerformed}
+                    <br/>
+                </h4>
+                :
+                null
+    );
+
+    return (
+        <>
+            <span>Latest scrape performed at:</span> {subscription_data}
+        </>
+    );
 };

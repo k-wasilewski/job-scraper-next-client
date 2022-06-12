@@ -125,8 +125,8 @@ export const isAuthorized = (dockerized?: boolean, cookie?: string) => {
         }
     } : null;
     return axios.post(dockerized ? DOCKERIZED_NODE_SERVER_ENDPOINT : NODE_SERVER_ENDPOINT, getIsAuthorizedData(), config)
-        .then(resp => resp.data.data.verify.user !== null)
-        .catch(err => false);
+        .then(resp => resp.data.data.verify.user.uuid)
+        .catch(err => null);
 }
 
 export const login = (email: string, password: string) => {
