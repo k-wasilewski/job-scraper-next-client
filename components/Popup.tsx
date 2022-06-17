@@ -1,6 +1,4 @@
-import React, {useEffect, useLayoutEffect, useRef} from "react";
-import ReactDOM from "react-dom";
-import {createWrapperAndAppendToBody} from "../utils/createPortal";
+import React, {useLayoutEffect, useRef} from "react";
 
 interface PopupProps {
     message: string;
@@ -11,7 +9,6 @@ export const Popup = (props: PopupProps) => {
     const { message, onClose } = props;
 
     const popupRef = useRef<HTMLDivElement>();
-    const popupPortalId = 'popup-portal-container';
 
     useLayoutEffect(() => {
         window.addEventListener('click', (e: MouseEvent) => {
@@ -27,14 +24,7 @@ export const Popup = (props: PopupProps) => {
         });
     }, [onClose]);
 
-    useEffect(() => {
-        if (message) {
-            const portalWrapper = document.getElementById(popupPortalId);
-            if (!portalWrapper) createWrapperAndAppendToBody(popupPortalId);
-        }
-    }, [message]);
-
-    const popupContent = (
+    return (
         <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>
             <div style={{position: 'absolute', top: '30%', left: '40vw'}}>
                 <div ref={popupRef} style={{backgroundColor: 'white', height: '3rem', width: '20vw', textAlign: 'center', display: 'table-cell', verticalAlign: 'middle'}}>
@@ -42,14 +32,5 @@ export const Popup = (props: PopupProps) => {
                 </div>
             </div>
         </div>
-    );
-
-    return (
-        <>
-            {message && process.browser && document.getElementById(popupPortalId) && ReactDOM.createPortal(
-                popupContent,
-                document.getElementById(popupPortalId)
-            )}
-        </>
     );
 }

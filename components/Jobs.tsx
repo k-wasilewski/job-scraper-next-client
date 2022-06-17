@@ -7,6 +7,7 @@ import {
     removeJobByGroupAndUuid,
     removeJobGroupByName
 } from "../requests";
+import {PortalComponent} from "./PortalComponent";
 
 interface JobsProps {
     _groupNames: string[]
@@ -83,16 +84,21 @@ export const Jobs = (props: JobsProps) => {
             <br/>
             <br/>
 
-            <ImageGallery
-                images={jobs.map(uuid => ({
-                    src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${uuid}.png`,
-                    onDelete: () => removeJob(uuid)
-                }))}
-                disactive={() => {
-                    setActiveGroup('')
-                    setJobs([]);
-                }}
-                loading={loadingScreenshots}
+            <PortalComponent
+                renderCondition={!loadingScreenshots}
+                rootElementId={'gallery-portal-container'}
+                element={
+                    <ImageGallery
+                        images={jobs.map(uuid => ({
+                            src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${uuid}.png`,
+                            onDelete: () => removeJob(uuid)
+                        }))}
+                        onClose={() => {
+                            setActiveGroup('')
+                            setJobs([]);
+                        }}
+                    />
+                }
             />
         </>
     );

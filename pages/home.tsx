@@ -11,6 +11,7 @@ import {NextPage} from "next";
 import {HeadComponent} from "../components/HeadComponent";
 import {Configs} from "../components/Configs";
 import {Jobs} from "../components/Jobs";
+import {PortalComponent} from "../components/PortalComponent";
 
 export interface ScrapeConfig {
     id: number;
@@ -63,7 +64,13 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
 
                 <Jobs _groupNames={_groupNames} setPopupMessage={setPopupMessage} currentUserUuid={_auth} />
 
-                <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
+                <PortalComponent
+                    renderCondition={!!popupMessage}
+                    rootElementId={'popup-portal-container'}
+                    element={
+                        <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
+                    }
+                />
             </main>
         </div>
     )
