@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const NODE_SERVER_HOST = "localhost:8080";
+export const NODE_SERVER_HOST = process.env.NODE_SERVER_HOST ? process.env.NODE_SERVER_HOST : "localhost:8080";
 export const DOCKERIZED_NODE_SERVER_HOST = "job-scraper-node-server:8080";
-export const SPRING_SERVER_HOST = "localhost:8081";
+export const SPRING_SERVER_HOST = process.env.SPRING_SERVER_HOST ? process.env.NODE_SERVER_HOST : "localhost:8081";
 export const DOCKERIZED_SPRING_SERVER_HOST = "job-scraper-spring-server:8081";
 
 export const NODE_SERVER_ENDPOINT = "http://" + NODE_SERVER_HOST + "/graphql";
