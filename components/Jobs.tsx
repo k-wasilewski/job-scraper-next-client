@@ -13,10 +13,12 @@ interface JobsProps {
     _groupNames: string[]
     setPopupMessage: (value: string) => void;
     currentUserUuid: string;
+    nodeServerHost?: string;
+    springServerHost?: string;
 }
 
 export const Jobs = (props: JobsProps) => {
-    const { _groupNames, setPopupMessage, currentUserUuid } = props;
+    const { _groupNames, setPopupMessage, currentUserUuid, nodeServerHost, springServerHost } = props;
 
     const [groupNames, setGroupNames] = useState(_groupNames);
     const [activeGroup, setActiveGroup] = useState('');
@@ -41,7 +43,7 @@ export const Jobs = (props: JobsProps) => {
 
     const handleJobGroupChange = (group: string) => {
         setLoadingScreenshots(true);
-        getJobsByGroup(group).then(resp => {
+        getJobsByGroup(group, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.files && resp.data.data.getScreenshotsByGroup.files.length) {
                 setJobs(resp.data.data.getScreenshotsByGroup.files);
                 setActiveGroup(group);
@@ -51,10 +53,10 @@ export const Jobs = (props: JobsProps) => {
     }
 
     const removeJobGroup = (groupName: string) => {
-        removeJobGroupByName(groupName).then(resp => {
+        removeJobGroupByName(groupName, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeAllScreenshotsByGroup && resp.data.data.removeAllScreenshotsByGroup.deleted) {
                 setPopupMessage(`All jobs of ${groupName} removed successfully`);
-                getJobGroupNames().then(resp => {
+                getJobGroupNames(false, "", nodeServerHost).then(resp => {
                     if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
                         setGroupNames(resp.data.data.getGroupNames.names);
                 });
@@ -63,9 +65,9 @@ export const Jobs = (props: JobsProps) => {
     }
 
     const removeJob = (uuid: string) => {
-        removeJobByGroupAndUuid(activeGroup, uuid).then(resp => {
+        removeJobByGroupAndUuid(activeGroup, uuid, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeScreenshotByGroupAndUuid && resp.data.data.removeScreenshotByGroupAndUuid.deleted) {
-                getJobGroupNames().then(resp => {
+                getJobGroupNames(false, "", nodeServerHost).then(resp => {
                     if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
                         setGroupNames(resp.data.data.getGroupNames.names);
                 });

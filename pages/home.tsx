@@ -27,10 +27,12 @@ export interface HomeProps {
     _auth: string | null;
     _configs: ScrapeConfig[];
     _groupNames: string[];
+    nodeServerHost?: string;
+    springServerHost?: string;
 }
 
 const Home: NextPage<HomeProps> = (props: HomeProps) => {
-    const { _auth, _configs, _groupNames } = props;
+    const { _auth, _configs, _groupNames, nodeServerHost, springServerHost } = props;
     const [popupMessage, setPopupMessage] = useState('');
 
     const router = useRouter();
@@ -60,9 +62,9 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
                     <NodeServerHeartbeat />
                 </ApolloProvider>
 
-                <Configs _configs={_configs} setPopupMessage={setPopupMessage}/>
+                <Configs _configs={_configs} setPopupMessage={setPopupMessage} nodeServerHost={nodeServerHost} springServerHost={springServerHost} />
 
-                <Jobs _groupNames={_groupNames} setPopupMessage={setPopupMessage} currentUserUuid={_auth} />
+                <Jobs _groupNames={_groupNames} setPopupMessage={setPopupMessage} currentUserUuid={_auth} nodeServerHost={nodeServerHost} springServerHost={springServerHost} />
 
                 <PortalComponent
                     renderCondition={!!popupMessage}

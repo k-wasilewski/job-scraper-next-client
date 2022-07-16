@@ -5,10 +5,12 @@ import {getScrapeConfigs, modifyScrapeConfig, persistScrapeConfig, removeScrapeC
 interface ConfigsProps {
     _configs: ScrapeConfig[];
     setPopupMessage: (value: string) => void;
+    nodeServerHost?: string;
+    springServerHost?: string;
 }
 
 export const Configs = (props: ConfigsProps) => {
-    const { _configs, setPopupMessage } = props;
+    const { _configs, setPopupMessage, nodeServerHost, springServerHost } = props;
 
     const [id, setId] = useState('');
     const [host, setHost] = useState('');
@@ -35,21 +37,21 @@ export const Configs = (props: ConfigsProps) => {
     );
 
     const handleScrape = () => {
-        scrape(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages)).then(resp => {
+        scrape(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.scrape && resp.data.data.scrape.complete) setPopupMessage('Scrape performed successfully');
         }).catch(e => console.log(e));
     }
 
     const handleAddConfig = () => {
-        persistScrapeConfig(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval)).then(resp => {
+        persistScrapeConfig(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval), springServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.addPage) setPopupMessage('Config added successfully');
         }).catch(e => console.log(e));
     }
 
     const handleDeleteConfig = (id: number) => {
-        removeScrapeConfig(id).then(resp => {
+        removeScrapeConfig(id, springServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.addPage) {
-                getScrapeConfigs().then(resp => {
+                getScrapeConfigs(false, "", springServerHost).then(resp => {
                     if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length) {
                         setConfigs(resp.data.data.getPages);
                         setPopupMessage('Config removed successfully');
@@ -60,7 +62,7 @@ export const Configs = (props: ConfigsProps) => {
     }
 
     const handleModifyConfig = () => {
-        modifyScrapeConfig(parseInt(id), host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval)).then(resp => {
+        modifyScrapeConfig(parseInt(id), host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval), springServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.modifyPage) setPopupMessage('Config modified successfully');
         }).catch(e => console.log(e));
     }

@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const NODE_SERVER_HOST = process.env.NODE_SERVER_HOST ? process.env.NODE_SERVER_HOST : "localhost:8080";
+export const NODE_SERVER_HOST = "localhost:8080";
 export const DOCKERIZED_NODE_SERVER_HOST = "job-scraper-node-server:8080";
-export const SPRING_SERVER_HOST = process.env.SPRING_SERVER_HOST ? process.env.NODE_SERVER_HOST : "localhost:8081";
+export const SPRING_SERVER_HOST = "localhost:8081";
 export const DOCKERIZED_SPRING_SERVER_HOST = "job-scraper-spring-server:8081";
 
 export const NODE_SERVER_ENDPOINT = "http://" + NODE_SERVER_HOST + "/graphql";
@@ -72,50 +72,68 @@ const getRegisterData = (email: string, password: string) => {
     return { "query": `mutation { register(email: \"${email}\", password: \"${password}\") { success, error { message }, user { email, uuid } } }`};
 }
 
-export const scrape = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {
-    return axios.post(NODE_SERVER_ENDPOINT, getScrapeData(host, path, jobAnchorSelector, jobLinkContains, numberOfPages));
+export const scrape = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getScrapeData(host, path, jobAnchorSelector, jobLinkContains, numberOfPages));
 }
 
-export const persistScrapeConfig = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number, interval: number) => {
-    return axios.post(SPRING_SERVER_ENDPOINT, getAddScrapeConfigData(host, path, jobAnchorSelector, jobLinkContains, numberOfPages, interval));
+export const persistScrapeConfig = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number, interval: number, springServerHost?: string) => {
+    const endpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getAddScrapeConfigData(host, path, jobAnchorSelector, jobLinkContains, numberOfPages, interval));
 }
 
-export const modifyScrapeConfig = (id: number, host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number, interval: number) => {
-    return axios.post(SPRING_SERVER_ENDPOINT, getModifyScrapeConfigData(id, host, path, jobAnchorSelector, jobLinkContains, numberOfPages, interval));
+export const modifyScrapeConfig = (id: number, host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number, interval: number, springServerHost?: string) => {
+    const endpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getModifyScrapeConfigData(id, host, path, jobAnchorSelector, jobLinkContains, numberOfPages, interval));
 }
 
-export const removeScrapeConfig = (id: number) => {
-    return axios.post(SPRING_SERVER_ENDPOINT, removeScrapeConfigData(id));
+export const removeScrapeConfig = (id: number, springServerHost?: string) => {
+    const endpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, removeScrapeConfigData(id));
 }
 
-export const getScrapeConfigs = (dockerized?: boolean, cookie?: string) => {
+export const getScrapeConfigs = (dockerized?: boolean, cookie?: string, springServerHost?: string) => {
+    const endpoint = springServerHost ? "http://" + springServerHost + "/graphql" : dockerized ? DOCKERIZED_SPRING_SERVER_ENDPOINT : SPRING_SERVER_ENDPOINT;
+
     const config = cookie ? {
       headers: {
           Cookie: cookie
       }
     } : null;
-    return axios.post(dockerized ? DOCKERIZED_SPRING_SERVER_ENDPOINT : SPRING_SERVER_ENDPOINT, getScrapeConfigsData(), config);
+    return axios.post(endpoint, getScrapeConfigsData(), config);
 }
 
-export const getJobGroupNames = (dockerized?: boolean, cookie?: string) => {
+export const getJobGroupNames = (dockerized?: boolean, cookie?: string, nodeServerHost?: string) => {
+   const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : dockerized ? DOCKERIZED_NODE_SERVER_ENDPOINT : NODE_SERVER_ENDPOINT;
+
     const config = cookie ? {
         headers: {
             Cookie: cookie
         }
     } : null;
-    return axios.post(dockerized ? DOCKERIZED_NODE_SERVER_ENDPOINT : NODE_SERVER_ENDPOINT, getGroupNamesData(), config);
+    return axios.post(endpoint, getGroupNamesData(), config);
 }
 
-export const getJobsByGroup = (group: string) => {
-    return axios.post(NODE_SERVER_ENDPOINT, getScreenshotsData(group));
+export const getJobsByGroup = (group: string, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getScreenshotsData(group));
 }
 
-export const removeJobByGroupAndUuid = (group: string, uuid: string) => {
-    return axios.post(NODE_SERVER_ENDPOINT, getRemoveJobData(group, uuid));
+export const removeJobByGroupAndUuid = (group: string, uuid: string, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getRemoveJobData(group, uuid));
 }
 
-export const removeJobGroupByName = (group: string) => {
-    return axios.post(NODE_SERVER_ENDPOINT, getRemoveJobGroupData(group));
+export const removeJobGroupByName = (group: string, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getRemoveJobGroupData(group));
 }
 
 export const isAuthorized = (dockerized?: boolean, cookie?: string) => {
@@ -129,12 +147,16 @@ export const isAuthorized = (dockerized?: boolean, cookie?: string) => {
         .catch(err => null);
 }
 
-export const login = (email: string, password: string) => {
-    return axios.post(NODE_SERVER_ENDPOINT, getLoginData(email, password));
+export const login = (email: string, password: string, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getLoginData(email, password));
 }
 
-export const register = (email: string, password: string) => {
-    return axios.post(NODE_SERVER_ENDPOINT, getRegisterData(email, password));
+export const register = (email: string, password: string, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+
+    return axios.post(endpoint, getRegisterData(email, password));
 }
 
 axios.defaults.withCredentials = true;

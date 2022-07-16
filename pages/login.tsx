@@ -2,8 +2,21 @@ import React, {ChangeEvent, FormEvent, useState} from "react";
 import {useRouter} from "next/router";
 import {login} from "../requests";
 import {HeadComponent} from "../components/HeadComponent";
+import getConfig from "next/config";
 
-export default function Login() {
+export function getStaticProps() {
+    const {publicRuntimeConfig} = getConfig();
+    const nodeServerHost = publicRuntimeConfig.nodeServerHost || null;
+
+    return { props: { nodeServerHost } };
+}
+
+interface LoginProps {
+    nodeServerHost: string | null;
+}
+
+export default function Login(props: LoginProps) {
+    const {nodeServerHost} = props;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -11,7 +24,7 @@ export default function Login() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        login(email, password).then(resp => {
+        login(email, password, nodeServerHost).then(resp => {
             if (resp.data.errors) throw new Error(resp.data.errors[0].message);
             if (resp.status === 200 && resp.data.data.login.success) {
                 router.push('/');
