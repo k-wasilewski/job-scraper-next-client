@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {ScrapeConfig} from "../pages/home";
 import {getScrapeConfigs, modifyScrapeConfig, persistScrapeConfig, removeScrapeConfig, scrape} from "../requests";
+import CardHOC from "./CardHOC";
 
 interface ConfigsProps {
     _configs: ScrapeConfig[];
@@ -31,7 +32,7 @@ export const Configs = (props: ConfigsProps) => {
                 <div>Job link contains: {config.jobLinkContains}</div>
                 <div>Number of pages: {config.numberOfPages}</div>
                 <div>Interval [ms]: {config.interval}</div>
-                <button onClick={() => handleDeleteConfig(config.id)}>Delete config at Spring</button>
+                <button className='btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config at Spring</button>
             </div>
         ))
     );
@@ -69,20 +70,21 @@ export const Configs = (props: ConfigsProps) => {
 
     return (
         <>
-            <h2>Add/edit config:</h2>
-            Id: <input type={'text'} value={id} onChange={e => setId(e.target.value)}/>
-            Host: <input type={'text'} value={host} onChange={e => setHost(e.target.value)}/>
-            Path: <input type={'text'} value={path} onChange={e => setPath(e.target.value)}/>
-            Job anchor selector: <input type={'text'} value={jobAnchorSelector} onChange={e => setJobAnchorSelector(e.target.value)}/><br/>
-            Job link contains: <input type={'text'} value={jobLinkContains} onChange={e => setJobLinkContains(e.target.value)}/>
-            Number of pages: <input type={'text'} value={numberOfPages} onChange={e => setNumberOfPages(e.target.value)}/>
-            Interval [ms]: <input type={'text'} value={interval} onChange={e => setInterval(e.target.value)}/><br/>
-            <button onClick={handleScrape}>Scrape now!</button>
-            <button onClick={handleAddConfig}>Add config</button>
-            <button onClick={handleModifyConfig}>Modify config</button>
+            <CardHOC title={<h3>Add/edit config:</h3>} body={
+                <>
+                    Id: <input type={'text'} value={id} onChange={e => setId(e.target.value)}/>
+                    Host: <input type={'text'} value={host} onChange={e => setHost(e.target.value)}/>
+                    Path: <input type={'text'} value={path} onChange={e => setPath(e.target.value)}/><br/>
+                    Job anchor selector: <input type={'text'} value={jobAnchorSelector} onChange={e => setJobAnchorSelector(e.target.value)}/>
+                    Job link contains: <input type={'text'} value={jobLinkContains} onChange={e => setJobLinkContains(e.target.value)}/><br/>
+                    Number of pages: <input type={'text'} value={numberOfPages} onChange={e => setNumberOfPages(e.target.value)}/>
+                    Interval [ms]: <input type={'text'} value={interval} onChange={e => setInterval(e.target.value)}/><br/>
+                    <button className='btn btn-light' onClick={handleScrape}>Scrape now!</button>
+                    <button className='btn btn-light' onClick={handleAddConfig}>Add config</button>
+                    <button className='btn btn-light' onClick={handleModifyConfig}>Modify config</button>
 
-            <h2>Configs:</h2>
-            {renderConfigs(configs)}
+                </>} />
+                <CardHOC title={<h3>Configs:</h3>} body={renderConfigs(configs)} />
         </>
     );
 };

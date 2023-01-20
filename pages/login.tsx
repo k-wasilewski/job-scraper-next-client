@@ -3,6 +3,7 @@ import {useRouter} from "next/router";
 import {login} from "../requests";
 import {HeadComponent} from "../components/HeadComponent";
 import getConfig from "next/config";
+import CardHOC from '../components/CardHOC';
 
 export function getStaticProps() {
     const {publicRuntimeConfig} = getConfig();
@@ -43,16 +44,38 @@ export default function Login(props: LoginProps) {
     }
 
     return (
-        <>
+        <div className="d-flex flex-column align-items-center">
             <HeadComponent />
-            <form onSubmit={handleSubmit}>
-                <span>Email:</span> <input type='email' onChange={handleEmailChange}/><br/>
-                <span>Password:</span> <input type='password' onChange={handlePasswordChange}/><br/>
-                <button type='submit'>Submit</button>
-            </form>
+            <CardHOC
+                title='Log in to the job-scraper'
+                className="w-50"
+                body={
+                    <form onSubmit={handleSubmit}>
+                    <div className="row mb-1">
+                        <div className="col-2">
+                            <span>Email:</span>
+                        </div>
+                        <div className="col-1">
+                            <input type='email' onChange={handleEmailChange}/>
+                        </div>
+                    </div>
+                    <div className="row mb-1">
+                        <div className="col-2">
+                            <span className="col-sm">Password:</span>
+                        </div>
+                        <div className="col-1">
+                            <input type='password' onChange={handlePasswordChange}/>
+                        </div>
+                    </div>
+                    <button className='btn btn-light' type='submit'>Submit</button>
+                    </form>
+                }
+            />
             <br/>
             <br/>
-            <button onClick={() => router.replace('/register')}>Register</button>
-        </>
+            <div className="w-50">
+            <button className='btn btn-light float-left' onClick={() => router.replace('/register')}>Register</button>
+            </div>
+        </div>
     );
 }

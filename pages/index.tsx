@@ -18,7 +18,7 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
             _groupNames = resp.data.data.getGroupNames.names;
     }).catch(e => console.log(e));
     _auth = await isAuthorized(true, req.headers.cookie);
-    return { props: { _auth, _configs, _groupNames, nodeServerHost, springServerHost } };
+    return { props: { _auth, _configs, _groupNames, nodeServerHost: nodeServerHost || null, springServerHost: springServerHost || null } };
 }
 
 export default function App(props) {

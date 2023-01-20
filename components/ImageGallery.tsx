@@ -50,7 +50,7 @@ export const ImageGallery = (props: ImageGalleryProps) => {
                                 src={image.src}
                             />
                             <br/>
-                            <button style={{margin: '0 auto', display: 'table'}} onClick={() => image.onDelete()}>Delete</button>
+                            <button className='btn btn-light' style={{margin: '0 auto', display: 'table'}} onClick={() => image.onDelete()}>Delete</button>
                         </div>
                     </div>
                 )

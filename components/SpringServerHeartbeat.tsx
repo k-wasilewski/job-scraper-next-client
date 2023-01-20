@@ -1,6 +1,7 @@
 import React from 'react';
 import {useSubscription} from "@apollo/client";
 import {gql} from "@apollo/client";
+import CardHOC from './CardHOC';
 
 // @ts-ignore
 const SUBSCRIBE_TO_SCRAPES_PERFORMED = gql`
@@ -28,8 +29,9 @@ export default function SpringServerHeartbeat() {
     );
 
     return (
-        <>
-            <span>Latest scrape performed at:</span> {subscription_data}
-        </>
+        <CardHOC 
+            title={<h5>Latest scrape performed at:</h5>} 
+            body={<small className='text-muted'>{subscription_data}</small>} 
+        />
     );
 };

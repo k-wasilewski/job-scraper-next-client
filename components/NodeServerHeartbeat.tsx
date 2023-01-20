@@ -1,6 +1,7 @@
 import React from 'react';
 import {useSubscription} from "@apollo/client";
 import {gql} from "@apollo/client";
+import CardHOC from './CardHOC';
 
 // @ts-ignore
 const SUBSCRIBE_TO_NEWS = gql`
@@ -33,8 +34,9 @@ export default function NodeServerHeartbeat() {
     );
 
     return (
-      <>
-        <span>Latest new job discovered:</span> {subscription_data}
-      </>
+      <CardHOC 
+        title={<h5>Latest new job discovered:</h5>} 
+        body={<small className='text-muted'>{subscription_data}</small>} 
+      />
     );
 };

@@ -48,11 +48,11 @@ export default function Register(props: RegisterProps) {
             <form onSubmit={handleSubmit}>
                 <span>Email:</span> <input type='email' onChange={handleEmailChange}/><br/>
                 <span>Password:</span> <input type='password' onChange={handlePasswordChange}/><br/>
-                <button type='submit'>Submit</button>
+                <button className='btn btn-light' type='submit'>Submit</button>
             </form>
             <br/>
             <br/>
-            <button onClick={() => router.replace('/login')}>Login</button>
+            <button className='btn btn-light' onClick={() => router.replace('/login')}>Login</button>
         </>
     );
 }

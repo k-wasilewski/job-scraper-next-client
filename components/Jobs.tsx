@@ -7,6 +7,7 @@ import {
     removeJobByGroupAndUuid,
     removeJobGroupByName
 } from "../requests";
+import CardHOC from "./CardHOC";
 import {PortalComponent} from "./PortalComponent";
 
 interface JobsProps {
@@ -28,7 +29,7 @@ export const Jobs = (props: JobsProps) => {
     const renderJobGroups = (groupNames: string[]) => (
         <>
             {groupNames && groupNames.map((group, i) =>
-                <button key={i} onClick={() => handleJobGroupChange(group)}>{group}</button>
+                <button className='btn btn-light' key={i} onClick={() => handleJobGroupChange(group)}>{group}</button>
             )}
         </>
     );
@@ -36,7 +37,7 @@ export const Jobs = (props: JobsProps) => {
     const renderDeleteJobGroup = (groupNames: string[]) => (
       <>
           {groupNames && groupNames.map((group, i) =>
-              <button key={i} onClick={() => removeJobGroup(group)}>{`Delete ${group}`}</button>
+              <button className='btn btn-light' key={i} onClick={() => removeJobGroup(group)}>{`Delete ${group}`}</button>
           )}
       </>
     );
@@ -77,11 +78,9 @@ export const Jobs = (props: JobsProps) => {
 
     return (
         <>
-            <h2>Delete jobs:</h2>
-            {renderDeleteJobGroup(groupNames)}
+            <CardHOC title={<h3>Delete jobs:</h3>} body={renderDeleteJobGroup(groupNames)} />
 
-            <h2>Jobs:</h2>
-            {renderJobGroups(groupNames)}
+            <CardHOC title={<h3>Jobs:</h3>} body={renderJobGroups(groupNames)} />
 
             <br/>
             <br/>

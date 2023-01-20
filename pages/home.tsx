@@ -38,7 +38,7 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
     const router = useRouter();
 
     useEffect(() => {
-        if (!_auth) logout();
+        //if (!_auth) logout();
     }, [router, _auth]);
 
     const logout = () => {
@@ -49,18 +49,25 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
         <div className={styles.container}>
             <HeadComponent />
             <main>
-                <button onClick={logout}>Logout</button>
-
+                <div className="d-flex justify-content-end">
+                    <button className='btn btn-light' onClick={logout}>Logout</button>
+                </div>
+                
                 <br/>
                 <br/>
 
-                <ApolloProvider client={apollo_client2}>
-                    <SpringServerHeartbeat />
-                </ApolloProvider>
-
-                <ApolloProvider client={apollo_client}>
-                    <NodeServerHeartbeat />
-                </ApolloProvider>
+                <div className="row">
+                    <div className="col-lg">
+                        <ApolloProvider client={apollo_client2}>
+                            <SpringServerHeartbeat />
+                        </ApolloProvider>
+                    </div>
+                    <div className="col-lg">
+                        <ApolloProvider client={apollo_client}>
+                            <NodeServerHeartbeat />
+                        </ApolloProvider>
+                    </div>
+                </div>
 
                 <Configs _configs={_configs} setPopupMessage={setPopupMessage} nodeServerHost={nodeServerHost} springServerHost={springServerHost} />
 
