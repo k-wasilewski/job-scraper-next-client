@@ -15,6 +15,10 @@ COPY . .
 
 COPY --from=dependencies /app/node_modules ./node_modules
 
+ENV NEXT_PUBLIC_NODE_SERVER_HOST="192.168.0.8:8080"
+
+ENV NEXT_PUBLIC_SPRING_SERVER_HOST="192.168.0.8:8081"
+
 RUN yarn build
 
 
@@ -23,6 +27,10 @@ FROM node:17 as runner
 WORKDIR /app
 
 ENV NODE_ENV production
+
+ENV NEXT_PUBLIC_NODE_SERVER_HOST="192.168.0.8:8080"
+
+ENV NEXT_PUBLIC_SPRING_SERVER_HOST="192.168.0.8:8081"
 
 COPY --from=builder /app/public ./public
 
