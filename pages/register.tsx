@@ -6,7 +6,7 @@ import getConfig from "next/config";
 
 export function getStaticProps() {
     const {publicRuntimeConfig} = getConfig();
-    const nodeServerHost = publicRuntimeConfig.nodeServerHost || null;
+    const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
 
     return { props: { nodeServerHost } };
 }

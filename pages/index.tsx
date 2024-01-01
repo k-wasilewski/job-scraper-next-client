@@ -6,9 +6,9 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
     let _configs: ScrapeConfig[] = [];
     let _groupNames: string[] = [];
     let _auth: string | null = null;
-    let nodeServerHost = undefined;
-    let springServerHost = undefined;
-    ({ nodeServerHost, springServerHost } = getConfig());
+    const { publicRuntimeConfig } = getConfig();
+    const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
+    const springServerHost = publicRuntimeConfig?.springServerHost || null;
     await getScrapeConfigs(true, req.headers.cookie).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
             _configs = resp.data.data.getPages;
