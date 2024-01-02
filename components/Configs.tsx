@@ -22,17 +22,47 @@ export const Configs = (props: ConfigsProps) => {
     const [interval, setInterval] = useState('');
     const [configs, setConfigs] = useState(_configs);
 
+    const unescapeQuotes: (str: string) => string = (str: string) => {
+        return str.replaceAll('&quot', '"');
+    }
+
+    const millisToMin: (millis: number) => number = (millis: number) => {
+        return millis / 60 / 1000;
+    }
+
     const renderConfigs = (configs: ScrapeConfig[]) => (
         configs && configs.map((config, i) => (
-            <div key={i} style={{marginBottom: '1rem'}}>
-                <div>Id: {config.id}</div>
-                <div>Host: {config.host}</div>
-                <div>Path: {config.path}</div>
-                <div>Job anchor selector: {config.jobAnchorSelector}</div>
-                <div>Job link contains: {config.jobLinkContains}</div>
-                <div>Number of pages: {config.numberOfPages}</div>
-                <div>Interval [ms]: {config.interval}</div>
-                <button className='btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config at Spring</button>
+            <div key={i}>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Id: </span>
+                    <span>{config.id}</span>
+                </div>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Host: </span>
+                    <span>{config.host}</span>
+                </div>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Path: </span>
+                    <span>{config.path}</span>
+                </div>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Job anchor selector: </span>
+                    <span>{unescapeQuotes(config.jobAnchorSelector)}</span>
+                </div>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Job link contains: </span>
+                    <span>{config.jobLinkContains}</span>
+                </div>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Number of pages: </span>
+                    <span>{config.numberOfPages}</span>
+                </div>
+                <div>
+                    <span style={{display: 'inline-block', minWidth: '150px'}}>Interval [min]: </span>
+                    <span>{config.interval}</span>
+                </div>
+
+                <button className='my-2 btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config</button>
             </div>
         ))
     );
@@ -68,23 +98,65 @@ export const Configs = (props: ConfigsProps) => {
         }).catch(e => console.log(e));
     }
 
+    const minToMillis: (min: string) => string = (min: string) => {
+        if (isNaN(parseInt(min))) return;
+        return (parseInt(min) * 60 * 1000).toString();
+    }
+
+    const content = (
+        <>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Id: </span>
+                <input type='text' value={id} onChange={e => setId(e.target.value)}/>
+            </div>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Host: </span>
+                <input type='text' value={host} onChange={e => setHost(e.target.value)}/>
+            </div>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Path: </span>
+                <input type='text' value={path} onChange={e => setPath(e.target.value)}/>
+            </div>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Job anchor selector: </span>
+                <input type='text' value={jobAnchorSelector} onChange={e => setJobAnchorSelector(e.target.value)}/>
+            </div>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Job link contains: </span>
+                <input type='text' value={jobLinkContains} onChange={e => setJobLinkContains(e.target.value)}/>
+            </div>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Number of pages: </span>
+                <input type='text' value={numberOfPages} onChange={e => setNumberOfPages(e.target.value)}/>
+            </div>
+            <div className="my-2">
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Interval [min]: </span>
+                <input type='string' value={interval} onChange={e => setInterval(minToMillis(e.target.value))}/>
+            </div>
+            
+            <div className="row my-2">
+                <button className='col-1 btn btn-light mx-2' onClick={handleScrape}>Scrape now!</button>
+                <button className='col-1 btn btn-light mx-2' onClick={handleAddConfig}>Add config</button>
+                <button className='col-1 btn btn-light mx-2' onClick={handleModifyConfig}>Modify config</button>
+            </div>
+        </>
+    );
+
     return (
         <>
-            <CardHOC title={<h3>Add/edit config:</h3>} body={
-                <>
-                    Id: <input type={'text'} value={id} onChange={e => setId(e.target.value)}/>
-                    Host: <input type={'text'} value={host} onChange={e => setHost(e.target.value)}/>
-                    Path: <input type={'text'} value={path} onChange={e => setPath(e.target.value)}/><br/>
-                    Job anchor selector: <input type={'text'} value={jobAnchorSelector} onChange={e => setJobAnchorSelector(e.target.value)}/>
-                    Job link contains: <input type={'text'} value={jobLinkContains} onChange={e => setJobLinkContains(e.target.value)}/><br/>
-                    Number of pages: <input type={'text'} value={numberOfPages} onChange={e => setNumberOfPages(e.target.value)}/>
-                    Interval [ms]: <input type={'text'} value={interval} onChange={e => setInterval(e.target.value)}/><br/>
-                    <button className='btn btn-light' onClick={handleScrape}>Scrape now!</button>
-                    <button className='btn btn-light' onClick={handleAddConfig}>Add config</button>
-                    <button className='btn btn-light' onClick={handleModifyConfig}>Modify config</button>
-
-                </>} />
-                <CardHOC title={<h3>Configs:</h3>} body={renderConfigs(configs)} />
+            <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#add-edit-config">
+                Add/edit config
+            </button>
+            <div className="collapse" id="add-edit-config">
+                <CardHOC title={<h3>Add/edit config:</h3>} body={content}/>
+            </div>
+            
+            <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#config-list">
+                Config list
+            </button>
+            <div className="collapse" id="config-list">
+                <CardHOC title={<h3>Config list:</h3>} body={renderConfigs(configs)}/>
+            </div>
         </>
     );
 };

@@ -3,6 +3,8 @@ import {useRouter} from "next/router";
 import {login, register} from "../requests";
 import {HeadComponent} from "../components/HeadComponent";
 import CardHOC from '../components/CardHOC';
+import { PortalComponent } from "./PortalComponent";
+import { Popup } from "./Popup";
 
 interface AuthFormProps {
     type: AuthFormType;
@@ -18,6 +20,7 @@ const AuthForm = (props: AuthFormProps) => {
     const {type, nodeServerHost} = props;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [popupMessage, setPopupMessage] = useState('');
 
     const router = useRouter();
 
@@ -25,15 +28,15 @@ const AuthForm = (props: AuthFormProps) => {
         e.preventDefault();
         if (type === AuthFormType.Login) {
             login(email, password, nodeServerHost).then(resp => {
-                if (resp.data.errors) throw new Error(resp.data.errors[0].message);
-                if (resp.status === 200 && resp.data.data.login.success) {
+                if (resp.data.errors) setPopupMessage(resp.data.errors[0].message);
+                else if (resp.status === 200 && resp.data.data.login.success) {
                     router.push('/');
                 }
             });
         } else if (type === AuthFormType.Register) {
             register(email, password, nodeServerHost).then(resp => {
-                if (resp.data.errors) throw new Error(resp.data.errors[0].message);
-                if (resp.status === 200 && resp.data.data.register.success) {
+                if (resp.data.errors) setPopupMessage(resp.data.errors[0].message);
+                else if (resp.status === 200 && resp.data.data.register.success) {
                     router.push('/');
                 }
             });
@@ -103,6 +106,14 @@ const AuthForm = (props: AuthFormProps) => {
             <div className="w-50">
                 {switchPageBtn()}
             </div>
+
+            <PortalComponent
+                renderCondition={!!popupMessage}
+                rootElementId={'popup-portal-container'}
+                element={
+                    <Popup message={popupMessage} onClose={() => setPopupMessage('')} />
+                }
+            />
         </div>
     );
 }
