@@ -12,6 +12,11 @@ import {HeadComponent} from "../components/HeadComponent";
 import {Configs} from "../components/Configs";
 import {Jobs} from "../components/Jobs";
 import {PortalComponent} from "../components/PortalComponent";
+import {connect} from "react-redux";
+import {setTheme} from "../redux/actions";
+import { Theme } from "../redux/reducers";
+import { getFromLocalStorage, setToLocalStorage } from "../utils/themeService";
+import Navbar from "../components/Navbar";
 
 export interface ScrapeConfig {
     id: number;
@@ -27,35 +32,35 @@ export interface HomeProps {
     _auth: string | null;
     _configs: ScrapeConfig[];
     _groupNames: string[];
+    theme: Theme;
+    setTheme: (theme: Theme) => void;
     nodeServerHost?: string;
     springServerHost?: string;
 }
 
 const Home: NextPage<HomeProps> = (props: HomeProps) => {
-    const { _auth, _configs, _groupNames, nodeServerHost, springServerHost } = props;
+    const { _auth, _configs, _groupNames, nodeServerHost, springServerHost, theme, setTheme } = props;
     const [popupMessage, setPopupMessage] = useState('');
 
     const router = useRouter();
+
+    const isDark = theme === Theme.Dark;
 
     useEffect(() => {
         //if (!_auth) logout();
     }, [router, _auth]);
 
-    const logout = () => {
-        router.replace('/login');
-    }
+    useEffect(() => {
+        const theme: Theme = getFromLocalStorage() || Theme.Light;
+        setTheme(theme);
+        setToLocalStorage(theme);
+    }, []);
 
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} ${isDark ? 'bg-dark' : ''}`}>
             <HeadComponent />
             <main>
-                <div className="d-flex justify-content-end">
-                    <button className='btn btn-light' onClick={logout}>Logout</button>
-                </div>
-                
-                <br/>
-                <br/>
-
+                <Navbar/>
                 <div className="row">
                     <div className="col-lg">
                         <ApolloProvider client={apollo_client2}>
@@ -85,4 +90,12 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
     )
 }
 
-export default Home;
+const mapStateToProps = (state) => ({
+    theme: state.themeReducer.theme  
+});
+
+const mapDispatchToProps = {
+    setTheme
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
