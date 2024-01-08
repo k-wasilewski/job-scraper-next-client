@@ -32,8 +32,8 @@ export interface HomeProps {
     _auth: string | null;
     _configs: ScrapeConfig[];
     _groupNames: string[];
-    theme: Theme;
-    setTheme: (theme: Theme) => void;
+    theme?: Theme;
+    setTheme?: (theme: Theme) => void;
     nodeServerHost?: string;
     springServerHost?: string;
 }

@@ -1,5 +1,5 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { setTheme } from "./actions";
+import { SET_THEME } from "./types";
 
 export enum Theme {
     Light = 'light',
@@ -11,7 +11,7 @@ const themeState = {
 };
 
 export const themeReducer = createReducer(themeState, {
-    [setTheme]: (state, action) => {
+    SET_THEME: (state, action) => {
         state.theme = action.payload;
     },
 });
