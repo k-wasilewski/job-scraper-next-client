@@ -12,11 +12,10 @@ import {HeadComponent} from "../components/HeadComponent";
 import {Configs} from "../components/Configs";
 import {Jobs} from "../components/Jobs";
 import {PortalComponent} from "../components/PortalComponent";
-import {connect} from "react-redux";
-import {setTheme} from "../redux/actions";
-import { Theme } from "../redux/reducers";
 import { getFromLocalStorage, setToLocalStorage } from "../utils/themeService";
 import Navbar from "../components/Navbar";
+import { selectTheme, setTheme, Theme } from "../redux/slices";
+import { useDispatch, useSelector } from "react-redux";
 
 export interface ScrapeConfig {
     id: number;
@@ -32,17 +31,19 @@ export interface HomeProps {
     _auth: string | null;
     _configs: ScrapeConfig[];
     _groupNames: string[];
-    theme?: Theme;
-    setTheme?: (theme: Theme) => void;
     nodeServerHost?: string;
     springServerHost?: string;
 }
 
 const Home: NextPage<HomeProps> = (props: HomeProps) => {
-    const { _auth, _configs, _groupNames, nodeServerHost, springServerHost, theme, setTheme } = props;
+    const { _auth, _configs, _groupNames, nodeServerHost, springServerHost } = props;
     const [popupMessage, setPopupMessage] = useState('');
 
     const router = useRouter();
+
+    const theme = useSelector(selectTheme);
+
+    const dispatch = useDispatch();
 
     const isDark = theme === Theme.Dark;
 
@@ -52,7 +53,7 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
 
     useEffect(() => {
         const theme: Theme = getFromLocalStorage() || Theme.Light;
-        setTheme(theme);
+        dispatch(setTheme(theme));
         setToLocalStorage(theme);
     }, []);
 
@@ -90,12 +91,4 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
     )
 }
 
-const mapStateToProps = (state) => ({
-    theme: state.themeReducer.theme  
-});
-
-const mapDispatchToProps = {
-    setTheme
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

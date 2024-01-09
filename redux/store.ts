@@ -1,15 +1,22 @@
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import { themeReducer } from "./reducers";
+import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
+import { themeSlice } from "./slices";
+import { createWrapper } from "next-redux-wrapper";
 
-const middleware = [
-    ...getDefaultMiddleware()
-];
+const createToolkitStore = ()  => store;
 
-const toolkitStore = configureStore({
+export const store = configureStore({
     reducer: {
-        themeReducer
-    },
-    middleware
+        [themeSlice.name]: themeSlice.reducer
+    }
 });
 
-export default toolkitStore;
+export type JobScraperStore = ReturnType<typeof createToolkitStore>;
+export type JobScraperState = ReturnType<JobScraperStore["getState"]>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  JobScraperState,
+  unknown,
+  Action
+>;
+
+export const wrapper = createWrapper(createToolkitStore);

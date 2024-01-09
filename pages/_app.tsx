@@ -1,8 +1,8 @@
 import Home, {HomeProps, ScrapeConfig} from "./home";
 import {getJobGroupNames, getScrapeConfigs, isAuthorized} from "../requests";
 import getConfig from "next/config";
-import {Provider} from 'react-redux';
-import store from '../redux/store';
+import { wrapper } from "../redux/store";
+import { ClientStoreProvider } from "../components/ClientStoreProvider";
 
 export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => {
     let _configs: ScrapeConfig[] = [];
@@ -21,10 +21,6 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
     return { props: { _auth, _configs, _groupNames, nodeServerHost: publicRuntimeConfig.nodeServerHost || null, springServerHost: publicRuntimeConfig.springServerHost || null } };
 }
 
-export default function App(props) {
-    return (
-        <Provider store={store}>
-            <Home {...props}/>
-        </Provider>
-    );
-}
+const App = (props) => <ClientStoreProvider><Home {...props}/></ClientStoreProvider>;
+
+export default wrapper.withRedux(App);

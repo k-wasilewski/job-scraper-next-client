@@ -1,4 +1,4 @@
-import { Theme } from "../redux/reducers";
+import { Theme } from "../redux/slices";
 
 export const getFromLocalStorage: () => Theme | null = () => {
     return localStorage.getItem('theme') as Theme || null;
