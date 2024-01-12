@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useSubscription} from "@apollo/client";
 import {gql} from "@apollo/client";
 import CardHOC from './CardHOC';
+import { setJob } from "../redux/slices";
+import { useDispatch } from "react-redux";
 
 // @ts-ignore
 const SUBSCRIBE_TO_NEWS = gql`
@@ -17,6 +19,12 @@ export default function NodeServerHeartbeat() {
     const { data, loading } = useSubscription(
         SUBSCRIBE_TO_NEWS
     );
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+      !loading && data && data.newJobs && data.newJobs.link && dispatch(setJob(data.newJobs.link));
+    }, [data]);
 
     const subscription_data = (
         loading ?

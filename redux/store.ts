@@ -1,12 +1,13 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
-import { themeSlice } from "./slices";
+import { jobSlice, themeSlice } from "./slices";
 import { createWrapper } from "next-redux-wrapper";
 
 const createToolkitStore = ()  => store;
 
 export const store = configureStore({
     reducer: {
-        [themeSlice.name]: themeSlice.reducer
+        [themeSlice.name]: themeSlice.reducer,
+        [jobSlice.name]: jobSlice.reducer
     }
 });
 

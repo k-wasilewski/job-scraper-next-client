@@ -26,10 +26,6 @@ export const Configs = (props: ConfigsProps) => {
         return str.replaceAll('&quot', '"');
     }
 
-    const millisToMin: (millis: number) => number = (millis: number) => {
-        return millis / 60 / 1000;
-    }
-
     const renderConfigs = (configs: ScrapeConfig[]) => (
         configs && configs.map((config, i) => (
             <div key={i}>
@@ -59,7 +55,7 @@ export const Configs = (props: ConfigsProps) => {
                 </div>
                 <div>
                     <span style={{display: 'inline-block', minWidth: '150px'}}>Interval [min]: </span>
-                    <span>{config.interval}</span>
+                    <span>{millisToMin(config.interval)}</span>
                 </div>
 
                 <button className='my-2 btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config</button>
@@ -103,6 +99,13 @@ export const Configs = (props: ConfigsProps) => {
         return (parseInt(min) * 60 * 1000).toString();
     }
 
+    const millisToMin: (millis: string | number) => string = (millis: string) => {
+        const millisInt: number = typeof millis === 'string' ? parseInt(millis) : millis;
+
+        if (isNaN(millisInt)) return;
+        return (millisInt / (60 * 1000)).toString();
+    }
+
     const content = (
         <>
             <div className="my-2">
@@ -131,7 +134,7 @@ export const Configs = (props: ConfigsProps) => {
             </div>
             <div className="my-2">
                 <span style={{display: 'inline-block', minWidth: '150px'}}>Interval [min]: </span>
-                <input type='string' value={interval} onChange={e => setInterval(minToMillis(e.target.value))}/>
+                <input type='string' value={millisToMin(interval)} onChange={e => setInterval(minToMillis(e.target.value))}/>
             </div>
             
             <div className="row my-2">

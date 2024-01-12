@@ -11,13 +11,13 @@ export interface ThemeState {
     themeState: Theme;
 }
 
-const initialState: ThemeState = {
+const initialThemeState: ThemeState = {
   themeState: Theme.Light
 }
 
 export const themeSlice = createSlice({
   name: 'theme',
-  initialState,
+  initialState: initialThemeState,
   reducers: {
     setTheme: (state: ThemeState, action) => {
       state.themeState = action.payload;
@@ -39,4 +39,34 @@ export const { setTheme } = themeSlice.actions;
 
 export const selectTheme = (state: JobScraperState) => state.theme.themeState;
 
-export default themeSlice.reducer;
+export interface JobState {
+  newJobLink: string;
+}
+
+const initialJobState: JobState = {
+  newJobLink: ''
+}
+
+export const jobSlice = createSlice({
+  name: 'job',
+  initialState: initialJobState,
+  reducers: {
+    setJob: (state: JobState, action) => {
+      state.newJobLink = action.payload;
+    },
+  },
+
+  // Special reducer for hydrating the state. Special case for next-redux-wrapper
+  extraReducers: {
+    [HYDRATE]: (state: JobState, action) => {
+      return {
+        ...state,
+        ...action.payload.theme,
+      };
+    },
+  },
+});
+
+export const { setJob } = jobSlice.actions;
+
+export const selectJob = (state: JobScraperState) => state.job.newJobLink;

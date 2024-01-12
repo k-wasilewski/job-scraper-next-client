@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ImageGallery} from "../components/ImageGallery";
 import {
     getJobGroupNames,
@@ -9,6 +9,8 @@ import {
 } from "../requests";
 import CardHOC from "./CardHOC";
 import {PortalComponent} from "./PortalComponent";
+import { selectJob } from "../redux/slices";
+import { useSelector } from "react-redux";
 
 interface JobsProps {
     _groupNames: string[]
@@ -25,6 +27,17 @@ export const Jobs = (props: JobsProps) => {
     const [activeGroup, setActiveGroup] = useState('');
     const [jobs, setJobs] = useState([]);
     const [loadingScreenshots, setLoadingScreenshots] = useState(false);
+
+    const newJob = useSelector(selectJob);
+
+    useEffect(() => {
+        getJobGroupNames(false).then(resp => {
+            if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names) {
+                const gn = resp.data.data.getGroupNames.names;
+                setGroupNames(gn);
+            }
+        }).catch(e => console.log(e));
+    }, [newJob]);
 
     const renderJobGroups = (groupNames: string[]) => (
         <>
