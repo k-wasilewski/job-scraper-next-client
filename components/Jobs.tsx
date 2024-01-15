@@ -10,7 +10,8 @@ import {
 import CardHOC from "./CardHOC";
 import {PortalComponent} from "./PortalComponent";
 import { selectJob } from "../redux/slices";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setLoading } from "../redux/slices";
 
 interface JobsProps {
     _groupNames: string[]
@@ -29,6 +30,8 @@ export const Jobs = (props: JobsProps) => {
     const [loadingScreenshots, setLoadingScreenshots] = useState(false);
 
     const newJob = useSelector(selectJob);
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         getJobGroupNames(false).then(resp => {
@@ -57,16 +60,19 @@ export const Jobs = (props: JobsProps) => {
 
     const handleJobGroupChange = (group: string) => {
         setLoadingScreenshots(true);
+        dispatch(setLoading(true));
         getJobsByGroup(group, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.files && resp.data.data.getScreenshotsByGroup.files.length) {
                 setJobs(resp.data.data.getScreenshotsByGroup.files);
                 setActiveGroup(group);
                 setLoadingScreenshots(false);
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const removeJobGroup = (groupName: string) => {
+        dispatch(setLoading(true));
         removeJobGroupByName(groupName, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeAllScreenshotsByGroup && resp.data.data.removeAllScreenshotsByGroup.deleted) {
                 setPopupMessage(`All jobs of ${groupName} removed successfully`);
@@ -75,10 +81,12 @@ export const Jobs = (props: JobsProps) => {
                         setGroupNames(resp.data.data.getGroupNames.names);
                 });
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const removeJob = (uuid: string) => {
+        dispatch(setLoading(true));
         removeJobByGroupAndUuid(activeGroup, uuid, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeScreenshotByGroupAndUuid && resp.data.data.removeScreenshotByGroupAndUuid.deleted) {
                 getJobGroupNames(false, "", nodeServerHost).then(resp => {
@@ -86,7 +94,8 @@ export const Jobs = (props: JobsProps) => {
                         setGroupNames(resp.data.data.getGroupNames.names);
                 });
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     return (

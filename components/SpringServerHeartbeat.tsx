@@ -17,7 +17,7 @@ export default function SpringServerHeartbeat() {
 
     const subscription_data = (
         loading ?
-            <h4>Loading...</h4>
+            <div className='spinner-border mx-auto'/>
             :
             data ?
                 <h4>
@@ -31,7 +31,7 @@ export default function SpringServerHeartbeat() {
     return (
         <CardHOC 
             title={<h5>Latest scrape performed at:</h5>} 
-            body={<small className='text-muted'>{subscription_data}</small>} 
+            body={<small className='d-flex text-muted'>{subscription_data}</small>} 
         />
     );
 };

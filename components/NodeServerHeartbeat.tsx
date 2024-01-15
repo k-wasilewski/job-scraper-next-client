@@ -28,7 +28,7 @@ export default function NodeServerHeartbeat() {
 
     const subscription_data = (
         loading ?
-            <h4>Loading...</h4>
+            <div className='spinner-border mx-auto '/>
             :
             data ?
                 <h4>
@@ -44,7 +44,7 @@ export default function NodeServerHeartbeat() {
     return (
       <CardHOC 
         title={<h5>Latest new job discovered:</h5>} 
-        body={<small className='text-muted'>{subscription_data}</small>} 
+        body={<small className='d-flex text-muted'>{subscription_data}</small>} 
       />
     );
 };

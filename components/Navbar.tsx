@@ -2,10 +2,11 @@ import React from "react";
 import { setToLocalStorage } from "../utils/themeService";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
-import { selectTheme, setTheme, Theme } from "../redux/slices";
+import { isLoading, selectTheme, setTheme, Theme } from "../redux/slices";
 
 const Navbar = () => {
     const theme = useSelector(selectTheme);
+    const loading: boolean = useSelector(isLoading);
 
     const dispatch = useDispatch();
 
@@ -18,6 +19,12 @@ const Navbar = () => {
 
     const isDark = theme === Theme.Dark;
 
+    const loader = (
+        <div className="d-flex justify-content-center">
+            <div className='spinner-border' style={{height: '3rem', width: '3rem', color: isDark ? 'white' : 'black'}}/>
+        </div>
+    );
+
     return (
         <nav className={`navbar navbar-expand-lg navbar-${isDark ? 'dark' : 'light'}`}>
             <a className={`navbar-brand ${isDark ? 'text-white' : ''}`}>job-scraper</a>
@@ -29,6 +36,9 @@ const Navbar = () => {
                             <a className="nav-link">Home</a>
                         </Link>
                     </li>
+                </ul>
+                <ul className="navbar-nav mx-auto justify-content-center">
+                    {loading && loader}
                 </ul>
                 <ul className="navbar-nav justify-content-end ms-auto">
                     <li className="nav-item dropdown mx-5">

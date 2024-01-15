@@ -48,7 +48,7 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
     const isDark = theme === Theme.Dark;
 
     useEffect(() => {
-        //if (!_auth) logout();
+        if (!_auth) logout();
     }, [router, _auth]);
 
     useEffect(() => {
@@ -56,6 +56,10 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
         dispatch(setTheme(theme));
         setToLocalStorage(theme);
     }, []);
+
+    const logout = () => {
+        router.replace('/login');
+    }
 
     return (
         <div className={`${styles.container} ${isDark ? 'bg-dark' : ''}`}>

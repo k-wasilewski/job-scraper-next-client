@@ -70,3 +70,35 @@ export const jobSlice = createSlice({
 export const { setJob } = jobSlice.actions;
 
 export const selectJob = (state: JobScraperState) => state.job.newJobLink;
+
+export interface LoadingState {
+  loading: boolean;
+}
+
+const initialLoadingState: LoadingState = {
+  loading: false,
+}
+
+export const loadingSlice = createSlice({
+  name: 'loading',
+  initialState: initialLoadingState,
+  reducers: {
+    setLoading: (state: LoadingState, action) => {
+      state.loading = action.payload;
+    },
+  },
+
+  // Special reducer for hydrating the state. Special case for next-redux-wrapper
+  extraReducers: {
+    [HYDRATE]: (state: LoadingState, action) => {
+      return {
+        ...state,
+        ...action.payload.loading,
+      };
+    },
+  },
+});
+
+export const { setLoading } = loadingSlice.actions;
+
+export const isLoading = (state: JobScraperState) => state.loading.loading;

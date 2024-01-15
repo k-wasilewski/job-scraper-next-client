@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {ScrapeConfig} from "../pages/home";
 import {getScrapeConfigs, modifyScrapeConfig, persistScrapeConfig, removeScrapeConfig, scrape} from "../requests";
 import CardHOC from "./CardHOC";
+import { setLoading } from "../redux/slices";
+import { useDispatch } from "react-redux";
 
 interface ConfigsProps {
     _configs: ScrapeConfig[];
@@ -21,6 +23,8 @@ export const Configs = (props: ConfigsProps) => {
     const [numberOfPages, setNumberOfPages] = useState('');
     const [interval, setInterval] = useState('');
     const [configs, setConfigs] = useState(_configs);
+
+    const dispatch = useDispatch();
 
     const unescapeQuotes: (str: string) => string = (str: string) => {
         return str.replaceAll('&quot', '"');
@@ -64,18 +68,23 @@ export const Configs = (props: ConfigsProps) => {
     );
 
     const handleScrape = () => {
+        dispatch(setLoading(true));
         scrape(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.scrape && resp.data.data.scrape.complete) setPopupMessage('Scrape performed successfully');
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const handleAddConfig = () => {
+        dispatch(setLoading(true));
         persistScrapeConfig(host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval), springServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.addPage) setPopupMessage('Config added successfully');
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const handleDeleteConfig = (id: number) => {
+        dispatch(setLoading(true));
         removeScrapeConfig(id, springServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.addPage) {
                 getScrapeConfigs(false, "", springServerHost).then(resp => {
@@ -85,13 +94,16 @@ export const Configs = (props: ConfigsProps) => {
                     }
                 });
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const handleModifyConfig = () => {
+        dispatch(setLoading(true));
         modifyScrapeConfig(parseInt(id), host, path, jobAnchorSelector, jobLinkContains, parseInt(numberOfPages), parseInt(interval), springServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.modifyPage) setPopupMessage('Config modified successfully');
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const minToMillis: (min: string) => string = (min: string) => {
