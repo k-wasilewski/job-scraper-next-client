@@ -23,6 +23,7 @@ export const Configs = (props: ConfigsProps) => {
     const [numberOfPages, setNumberOfPages] = useState('');
     const [interval, setInterval] = useState('');
     const [configs, setConfigs] = useState(_configs);
+    const [expandedConfig, setExpandedConfig] = useState(null);
 
     const dispatch = useDispatch();
 
@@ -31,40 +32,62 @@ export const Configs = (props: ConfigsProps) => {
     }
 
     const renderConfigs = (configs: ScrapeConfig[]) => (
-        configs && configs.map((config, i) => (
-            <div key={i}>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Id: </span>
-                    <span>{config.id}</span>
-                </div>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Host: </span>
-                    <span>{config.host}</span>
-                </div>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Path: </span>
-                    <span>{config.path}</span>
-                </div>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Job anchor selector: </span>
-                    <span>{unescapeQuotes(config.jobAnchorSelector)}</span>
-                </div>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Job link contains: </span>
-                    <span>{config.jobLinkContains}</span>
-                </div>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Number of pages: </span>
-                    <span>{config.numberOfPages}</span>
-                </div>
-                <div>
-                    <span style={{display: 'inline-block', minWidth: '150px'}}>Interval [min]: </span>
-                    <span>{millisToMin(config.interval)}</span>
-                </div>
+        <>
+            {configs && configs.map((config, i) => {
+                const configId = `config-${i}`;
 
-                <button className='my-2 btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config</button>
+                return (
+                    <div key={configId}>
+                        <span className="lead d-inline-block" style={{width: '300px'}}>{config.host}</span>
+                        <button className='btn btn-light mx-4' key={i} onClick={() => toggleExpansion(configId)}>{isExpanded(configId) ? `Hide details` : `Show details`}</button>
+                        {isExpanded(configId) ? renderConfigDetails(config) : null}
+                    </div>
+                );
+            })}
+        </>
+    );
+
+    const toggleExpansion = (configId: string) => {
+        setExpandedConfig(isExpanded(configId) ? null : configId);
+    }
+
+    const isExpanded = (configId: string) => {
+        return expandedConfig === configId;
+    }
+
+    const renderConfigDetails = (config: ScrapeConfig) => (
+        <>
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Id: </span>
+                <span>{config.id}</span>
             </div>
-        ))
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Host: </span>
+                <span>{config.host}</span>
+            </div>
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Path: </span>
+                <span>{config.path}</span>
+            </div>
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Job anchor selector: </span>
+                <span>{unescapeQuotes(config.jobAnchorSelector)}</span>
+            </div>
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Job link contains: </span>
+                <span>{config.jobLinkContains}</span>
+            </div>
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Number of pages: </span>
+                <span>{config.numberOfPages}</span>
+            </div>
+            <div>
+                <span style={{display: 'inline-block', minWidth: '150px'}}>Interval [min]: </span>
+                <span>{millisToMin(config.interval)}</span>
+            </div>
+
+            <button className='my-2 btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config</button>
+        </>
     );
 
     const handleScrape = () => {
@@ -158,19 +181,22 @@ export const Configs = (props: ConfigsProps) => {
     );
 
     return (
-        <>
-            <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#add-edit-config">
-                Add/edit config
-            </button>
-            <div className="collapse" id="add-edit-config">
-                <CardHOC title={<h3>Add/edit config:</h3>} body={content}/>
-            </div>
-            
+        <>            
             <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#config-list">
-                Config list
+                Configs
             </button>
             <div className="collapse" id="config-list">
-                <CardHOC title={<h3>Config list:</h3>} body={renderConfigs(configs)}/>
+                <CardHOC title={<h3>Configs:</h3>} body={
+                    <>
+                        <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#add-edit-config">
+                            Add/edit config
+                        </button>
+                        <div className="collapse" id="add-edit-config">
+                            <CardHOC title={<h3>Add/edit config:</h3>} body={content}/>
+                        </div>
+                        {renderConfigs(configs)}
+                    </>
+                }/>
             </div>
         </>
     );
