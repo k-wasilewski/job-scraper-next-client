@@ -86,7 +86,7 @@ export const Configs = (props: ConfigsProps) => {
                 <span>{millisToMin(config.interval)}</span>
             </div>
 
-            <button className='my-2 btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Delete config</button>
+            <button className='my-2 btn btn-light' onClick={() => handleDeleteConfig(config.id)}>Remove</button>
         </>
     );
 
