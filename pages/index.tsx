@@ -21,6 +21,6 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
     return { props: { _auth, _configs, _groupNames, nodeServerHost, springServerHost } };
 }
 
-export default function App(props) {
-    return <Home {...props}/>;
-}
+const App = (props) => <Home {...props}/>;
+
+export default App;

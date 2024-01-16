@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ImageGallery} from "../components/ImageGallery";
 import {
     getJobGroupNames,
@@ -7,7 +7,11 @@ import {
     removeJobByGroupAndUuid,
     removeJobGroupByName
 } from "../requests";
+import CardHOC from "./CardHOC";
 import {PortalComponent} from "./PortalComponent";
+import { selectJob } from "../redux/slices";
+import { useSelector, useDispatch } from "react-redux";
+import { setLoading } from "../redux/slices";
 
 interface JobsProps {
     _groupNames: string[]
@@ -25,34 +29,46 @@ export const Jobs = (props: JobsProps) => {
     const [jobs, setJobs] = useState([]);
     const [loadingScreenshots, setLoadingScreenshots] = useState(false);
 
+    const newJob = useSelector(selectJob);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        getJobGroupNames(false).then(resp => {
+            if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names) {
+                const gn = resp.data.data.getGroupNames.names;
+                setGroupNames(gn);
+            }
+        }).catch(e => console.log(e));
+    }, [newJob]);
+
     const renderJobGroups = (groupNames: string[]) => (
         <>
-            {groupNames && groupNames.map((group, i) =>
-                <button key={i} onClick={() => handleJobGroupChange(group)}>{group}</button>
-            )}
+            {groupNames && groupNames.map((group, i) => (
+                <div key={`job-group-${i}`}>
+                    <span className="lead d-inline-block" style={{width: '300px'}}>{group}</span>
+                    <button className='btn btn-light mx-4' key={i} onClick={() => handleJobGroupChange(group)}>View jobs</button>
+                    <button className='btn btn-light mx-4' key={i} onClick={() => removeJobGroup(group)}>Remove all</button>
+                </div>
+            ))}
         </>
-    );
-
-    const renderDeleteJobGroup = (groupNames: string[]) => (
-      <>
-          {groupNames && groupNames.map((group, i) =>
-              <button key={i} onClick={() => removeJobGroup(group)}>{`Delete ${group}`}</button>
-          )}
-      </>
     );
 
     const handleJobGroupChange = (group: string) => {
         setLoadingScreenshots(true);
+        dispatch(setLoading(true));
         getJobsByGroup(group, nodeServerHost).then(resp => {
-            if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.files && resp.data.data.getScreenshotsByGroup.files.length) {
-                setJobs(resp.data.data.getScreenshotsByGroup.files);
+            if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.length) {
+                setJobs(resp.data.data.getScreenshotsByGroup);
                 setActiveGroup(group);
                 setLoadingScreenshots(false);
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const removeJobGroup = (groupName: string) => {
+        dispatch(setLoading(true));
         removeJobGroupByName(groupName, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeAllScreenshotsByGroup && resp.data.data.removeAllScreenshotsByGroup.deleted) {
                 setPopupMessage(`All jobs of ${groupName} removed successfully`);
@@ -61,10 +77,12 @@ export const Jobs = (props: JobsProps) => {
                         setGroupNames(resp.data.data.getGroupNames.names);
                 });
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     const removeJob = (uuid: string) => {
+        dispatch(setLoading(true));
         removeJobByGroupAndUuid(activeGroup, uuid, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.removeScreenshotByGroupAndUuid && resp.data.data.removeScreenshotByGroupAndUuid.deleted) {
                 getJobGroupNames(false, "", nodeServerHost).then(resp => {
@@ -72,16 +90,18 @@ export const Jobs = (props: JobsProps) => {
                         setGroupNames(resp.data.data.getGroupNames.names);
                 });
             }
-        }).catch(e => console.log(e));
+        }).catch(e => console.log(e))
+        .finally(() => dispatch(setLoading(false)));
     }
 
     return (
         <>
-            <h2>Delete jobs:</h2>
-            {renderDeleteJobGroup(groupNames)}
-
-            <h2>Jobs:</h2>
-            {renderJobGroups(groupNames)}
+            <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#job-offers">
+                Jobs
+            </button>
+            <div className="collapse" id="job-offers">
+                <CardHOC title={<h3>Jobs:</h3>} body={renderJobGroups(groupNames)} />
+            </div>
 
             <br/>
             <br/>
@@ -91,9 +111,10 @@ export const Jobs = (props: JobsProps) => {
                 rootElementId={'gallery-portal-container'}
                 element={
                     <ImageGallery
-                        images={jobs.map(uuid => ({
-                            src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${uuid}.png`,
-                            onDelete: () => removeJob(uuid)
+                        images={jobs.map(job => ({
+                            src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${job.name}.png`,
+                            onDelete: () => removeJob(job.name),
+                            link: job.link
                         }))}
                         onClose={() => {
                             setActiveGroup('')

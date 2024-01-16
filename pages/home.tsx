@@ -12,6 +12,10 @@ import {HeadComponent} from "../components/HeadComponent";
 import {Configs} from "../components/Configs";
 import {Jobs} from "../components/Jobs";
 import {PortalComponent} from "../components/PortalComponent";
+import { getFromLocalStorage, setToLocalStorage } from "../utils/themeService";
+import Navbar from "../components/Navbar";
+import { selectTheme, setTheme, Theme } from "../redux/slices";
+import { useDispatch, useSelector } from "react-redux";
 
 export interface ScrapeConfig {
     id: number;
@@ -37,30 +41,43 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
 
     const router = useRouter();
 
+    const theme = useSelector(selectTheme);
+
+    const dispatch = useDispatch();
+
+    const isDark = theme === Theme.Dark;
+
     useEffect(() => {
         if (!_auth) logout();
     }, [router, _auth]);
+
+    useEffect(() => {
+        const theme: Theme = getFromLocalStorage() || Theme.Light;
+        dispatch(setTheme(theme));
+        setToLocalStorage(theme);
+    }, []);
 
     const logout = () => {
         router.replace('/login');
     }
 
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} ${isDark ? 'bg-dark' : ''}`}>
             <HeadComponent />
             <main>
-                <button onClick={logout}>Logout</button>
-
-                <br/>
-                <br/>
-
-                <ApolloProvider client={apollo_client2}>
-                    <SpringServerHeartbeat />
-                </ApolloProvider>
-
-                <ApolloProvider client={apollo_client}>
-                    <NodeServerHeartbeat />
-                </ApolloProvider>
+                <Navbar/>
+                <div className="row">
+                    <div className="col-lg">
+                        <ApolloProvider client={apollo_client2}>
+                            <SpringServerHeartbeat />
+                        </ApolloProvider>
+                    </div>
+                    <div className="col-lg">
+                        <ApolloProvider client={apollo_client}>
+                            <NodeServerHeartbeat />
+                        </ApolloProvider>
+                    </div>
+                </div>
 
                 <Configs _configs={_configs} setPopupMessage={setPopupMessage} nodeServerHost={nodeServerHost} springServerHost={springServerHost} />
 

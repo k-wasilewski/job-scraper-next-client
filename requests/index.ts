@@ -49,7 +49,7 @@ const getIsAuthorizedData = () => {
 }
 
 const getScreenshotsData = (groupName: string) => {
-    return { "query": `{ getScreenshotsByGroup(groupName: \"${groupName}\") { files } }`};
+    return { "query": `{ getScreenshotsByGroup(groupName: \"${groupName}\") { name, link } }`};
 }
 
 const removeScrapeConfigData = (id: number) => {
