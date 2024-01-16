@@ -45,7 +45,9 @@ export const ImageGallery = (props: ImageGalleryProps) => {
 
                         <img alt='prevImage' onClick={setPrevImage} src={arrowLeft.src} ref={arrowLeftRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', left: '1%', cursor: 'pointer'}} />
                         <img alt='nextImage' onClick={setNextImage} src={arrowLeft.src} ref={arrowRightRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', right: '1%', cursor: 'pointer', transform: 'scaleX(-1)'}} />
+                        
                         <div ref={imgRef} style={{margin: '0 auto', display: 'table'}}>
+                            <a className="d-block" href={image.link} target="_blank" rel="noreferrer" style={{color:'white'}}>{image.link}</a>
                             <img
                                 alt={`screenshot-${i}`}
                                 key={i}
@@ -67,4 +69,5 @@ interface ImageGalleryProps {
 interface Image {
     src: string;
     onDelete: () => void;
+    link: string;
 }

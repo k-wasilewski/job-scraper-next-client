@@ -58,8 +58,8 @@ export const Jobs = (props: JobsProps) => {
         setLoadingScreenshots(true);
         dispatch(setLoading(true));
         getJobsByGroup(group, nodeServerHost).then(resp => {
-            if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.files && resp.data.data.getScreenshotsByGroup.files.length) {
-                setJobs(resp.data.data.getScreenshotsByGroup.files);
+            if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.length) {
+                setJobs(resp.data.data.getScreenshotsByGroup);
                 setActiveGroup(group);
                 setLoadingScreenshots(false);
             }
@@ -111,9 +111,10 @@ export const Jobs = (props: JobsProps) => {
                 rootElementId={'gallery-portal-container'}
                 element={
                     <ImageGallery
-                        images={jobs.map(uuid => ({
-                            src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${uuid}.png`,
-                            onDelete: () => removeJob(uuid)
+                        images={jobs.map(job => ({
+                            src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${job.name}.png`,
+                            onDelete: () => removeJob(job.name),
+                            link: job.link
                         }))}
                         onClose={() => {
                             setActiveGroup('')
