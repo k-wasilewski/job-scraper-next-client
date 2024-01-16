@@ -7,6 +7,8 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
     let _groupNames: string[] = [];
     let _auth: string | null = null;
     const { publicRuntimeConfig } = getConfig();
+    const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
+    const springServerHost = publicRuntimeConfig?.springServerHost || null;
     await getScrapeConfigs(true, req.headers.cookie).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
             _configs = resp.data.data.getPages;
@@ -16,7 +18,7 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
             _groupNames = resp.data.data.getGroupNames.names;
     }).catch(e => console.log(e));
     _auth = await isAuthorized(true, req.headers.cookie);
-    return { props: { _auth, _configs, _groupNames, nodeServerHost: publicRuntimeConfig.nodeServerHost || null, springServerHost: publicRuntimeConfig.springServerHost || null } };
+    return { props: { _auth, _configs, _groupNames, nodeServerHost, springServerHost } };
 }
 
 const App = (props) => <Home {...props}/>;
