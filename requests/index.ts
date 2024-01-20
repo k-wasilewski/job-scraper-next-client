@@ -10,7 +10,9 @@ export const DOCKERIZED_NODE_SERVER_ENDPOINT = "http://" + DOCKERIZED_NODE_SERVE
 export const SPRING_SERVER_ENDPOINT =  "http://" + SPRING_SERVER_HOST + "/graphql";
 export const DOCKERIZED_SPRING_SERVER_ENDPOINT =  "http://" + DOCKERIZED_SPRING_SERVER_HOST + "/graphql";
 export const NODE_SERVER_SUBSCRIPTIONS_ENDPOINT = "ws://" + NODE_SERVER_HOST + "/subscriptions";
+export const DOCKERIZED_NODE_SERVER_SUBSCRIPTIONS_ENDPOINT = "ws://" + DOCKERIZED_NODE_SERVER_HOST + "/subscriptions";
 export const SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT = "ws://" + SPRING_SERVER_HOST + "/subscriptions";
+export const DOCKERIZED_SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT = "ws://" + DOCKERIZED_SPRING_SERVER_HOST + "/subscriptions";
 
 const getScrapeData = (host: string, path: string, jobAnchorSelector: string, jobLinkContains: string, numberOfPages: number) => {
     const _host = host.replace(/"/g, '&quot');

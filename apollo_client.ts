@@ -1,13 +1,13 @@
 import { ApolloClient, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
-import {NODE_SERVER_ENDPOINT, NODE_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
+import {DOCKERIZED_NODE_SERVER_ENDPOINT, DOCKERIZED_NODE_SERVER_SUBSCRIPTIONS_ENDPOINT, NODE_SERVER_ENDPOINT, NODE_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig } = getConfig();
 const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
-const nodeServerEndpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
-const nodeServerSubscriptionsEndpoint = nodeServerHost ? "http://" + nodeServerHost + "/subscriptions" : NODE_SERVER_SUBSCRIPTIONS_ENDPOINT;
+const nodeServerEndpoint = nodeServerHost ? DOCKERIZED_NODE_SERVER_ENDPOINT : NODE_SERVER_ENDPOINT;
+const nodeServerSubscriptionsEndpoint = nodeServerHost ? DOCKERIZED_NODE_SERVER_SUBSCRIPTIONS_ENDPOINT : NODE_SERVER_SUBSCRIPTIONS_ENDPOINT;
 
 export interface Definintion {
     kind: string;

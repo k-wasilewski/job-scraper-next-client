@@ -1,15 +1,15 @@
 import { ApolloClient, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from "@apollo/client/utilities";
 import {Definintion} from "./apollo_client";
-import {SPRING_SERVER_ENDPOINT, SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
+import {DOCKERIZED_SPRING_SERVER_ENDPOINT, DOCKERIZED_SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT, SPRING_SERVER_ENDPOINT, SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig } = getConfig();
 const springServerHost = publicRuntimeConfig?.nodeServerHost || null;
-const springServerEndpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
-const springServerSubscriptionsEndpoint = springServerHost ? "http://" + springServerHost + "/subscriptions" : SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT;
+const springServerEndpoint = springServerHost ? DOCKERIZED_SPRING_SERVER_ENDPOINT : SPRING_SERVER_ENDPOINT;
+const springServerSubscriptionsEndpoint = springServerHost ? DOCKERIZED_SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT : SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT;
 
 
 const httpLink = new HttpLink({
