@@ -10,7 +10,7 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
     const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
     const springServerHost = publicRuntimeConfig?.springServerHost || null;
     const environment = publicRuntimeConfig?.environment || null;
-    console.log(environment)
+    console.log(nodeServerHost, springServerHost, environment)
     await getScrapeConfigs(true, req.headers.cookie, springServerHost).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
             _configs = resp.data.data.getPages;
