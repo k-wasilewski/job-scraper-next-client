@@ -1,14 +1,12 @@
 import Home, {HomeProps, ScrapeConfig} from "./home";
 import {getJobGroupNames, getScrapeConfigs, isAuthorized} from "../requests";
-import getConfig from "next/config";
 
 export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => {
     let _configs: ScrapeConfig[] = [];
     let _groupNames: string[] = [];
     let _auth: string | null = null;
-    const { publicRuntimeConfig } = getConfig();
-    const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
-    const springServerHost = publicRuntimeConfig?.springServerHost || null;
+    const nodeServerHost = process.env.NEXT_PUBLIC_NODE_SERVER_HOST || null;
+    const springServerHost = process.env.NEXT_PUBLIC_SPRING_SERVER_HOST || null;
     await getScrapeConfigs(true, req.headers.cookie, springServerHost).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
             _configs = resp.data.data.getPages;
