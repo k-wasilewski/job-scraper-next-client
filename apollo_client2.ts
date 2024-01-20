@@ -4,13 +4,20 @@ import {Definintion} from "./apollo_client";
 import {SPRING_SERVER_ENDPOINT, SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
+const springServerHost = publicRuntimeConfig?.nodeServerHost || null;
+const springServerEndpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
+const springServerSubscriptionsEndpoint = springServerHost ? "http://" + springServerHost + "/subscriptions" : SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT;
+
 
 const httpLink = new HttpLink({
-    uri: SPRING_SERVER_ENDPOINT,
+    uri: springServerEndpoint,
 });
 
 const wsLink = process.browser ? new GraphQLWsLink(createClient({
-    url: SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT,
+    url: springServerSubscriptionsEndpoint,
     shouldRetry: () => true
 })) : null;
 

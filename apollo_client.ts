@@ -2,6 +2,12 @@ import { ApolloClient, InMemoryCache, split, HttpLink } from '@apollo/client';
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import {NODE_SERVER_ENDPOINT, NODE_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
+const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
+const nodeServerEndpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
+const nodeServerSubscriptionsEndpoint = nodeServerHost ? "http://" + nodeServerHost + "/subscriptions" : NODE_SERVER_SUBSCRIPTIONS_ENDPOINT;
 
 export interface Definintion {
     kind: string;
@@ -9,12 +15,12 @@ export interface Definintion {
 };
 
 const httpLink = new HttpLink({
-    uri: NODE_SERVER_ENDPOINT,
+    uri: nodeServerEndpoint,
     credentials: 'include'
 });
 
 const wsLink = process.browser ? new WebSocketLink({
-    uri: NODE_SERVER_SUBSCRIPTIONS_ENDPOINT,
+    uri: nodeServerSubscriptionsEndpoint,
     options: {
         reconnect: true
     },
