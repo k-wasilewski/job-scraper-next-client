@@ -28,7 +28,7 @@ FROM arm32v7/node:17 as runner
 
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV production_rpi
 
 ENV NEXT_PUBLIC_NODE_SERVER_HOST="192.168.0.8:8080"
 
