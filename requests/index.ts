@@ -138,13 +138,14 @@ export const removeJobGroupByName = (group: string, nodeServerHost?: string) => 
     return axios.post(endpoint, getRemoveJobGroupData(group));
 }
 
-export const isAuthorized = (dockerized?: boolean, cookie?: string) => {
+export const isAuthorized = (dockerized?: boolean, cookie?: string, nodeServerHost?: string) => {
+    const endpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : dockerized ? DOCKERIZED_NODE_SERVER_ENDPOINT : NODE_SERVER_ENDPOINT;
     const config = cookie ? {
         headers: {
             Cookie: cookie
         }
     } : null;
-    return axios.post(dockerized ? DOCKERIZED_NODE_SERVER_ENDPOINT : NODE_SERVER_ENDPOINT, getIsAuthorizedData(), config)
+    return axios.post(endpoint, getIsAuthorizedData(), config)
         .then(resp => resp.data.data.verify.user.uuid)
         .catch(err => null);
 }

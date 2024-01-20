@@ -9,15 +9,15 @@ export const getServerSideProps = async ({req}): Promise<{props: HomeProps}> => 
     const { publicRuntimeConfig } = getConfig();
     const nodeServerHost = publicRuntimeConfig?.nodeServerHost || null;
     const springServerHost = publicRuntimeConfig?.springServerHost || null;
-    await getScrapeConfigs(true, req.headers.cookie).then(resp => {
+    await getScrapeConfigs(true, req.headers.cookie, springServerHost).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getPages && resp.data.data.getPages.length)
             _configs = resp.data.data.getPages;
     }).catch(e => console.log(e));
-    await getJobGroupNames(true, req.headers.cookie).then(resp => {
+    await getJobGroupNames(true, req.headers.cookie, nodeServerHost).then(resp => {
         if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names)
             _groupNames = resp.data.data.getGroupNames.names;
     }).catch(e => console.log(e));
-    _auth = await isAuthorized(true, req.headers.cookie);
+    _auth = await isAuthorized(true, req.headers.cookie, nodeServerHost);
     return { props: { _auth, _configs, _groupNames, nodeServerHost, springServerHost } };
 }
 

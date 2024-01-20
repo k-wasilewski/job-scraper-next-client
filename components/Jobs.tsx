@@ -34,7 +34,7 @@ export const Jobs = (props: JobsProps) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getJobGroupNames(false).then(resp => {
+        getJobGroupNames(true, null, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names) {
                 const gn = resp.data.data.getGroupNames.names;
                 setGroupNames(gn);
