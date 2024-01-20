@@ -4,10 +4,8 @@ import {Definintion} from "./apollo_client";
 import {SPRING_SERVER_ENDPOINT, SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./requests";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { createClient } from "graphql-ws";
-import getConfig from "next/config";
 
-const { publicRuntimeConfig } = getConfig();
-const springServerHost = publicRuntimeConfig?.nodeServerHost || null;
+const springServerHost = process.env.NEXT_PUBLIC_SPRING_SERVER_HOST || null;
 const springServerEndpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
 const springServerSubscriptionsEndpoint = springServerHost ? "http://" + springServerHost + "/subscriptions" : SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT;
 
