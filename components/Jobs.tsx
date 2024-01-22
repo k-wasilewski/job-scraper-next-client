@@ -3,7 +3,6 @@ import {ImageGallery} from "../components/ImageGallery";
 import {
     getJobGroupNames,
     getJobsByGroup,
-    NODE_SERVER_HOST,
     removeJobByGroupAndUuid,
     removeJobGroupByName
 } from "../requests";
@@ -112,7 +111,7 @@ export const Jobs = (props: JobsProps) => {
                 element={
                     <ImageGallery
                         images={jobs.map(job => ({
-                            src: `http://${NODE_SERVER_HOST}/screenshots/${currentUserUuid}/${activeGroup}/${job.name}.png`,
+                            src: `http://${nodeServerHost}/screenshots/${currentUserUuid}/${activeGroup}/${job.name}.png`,
                             onDelete: () => removeJob(job.name),
                             link: job.link
                         }))}
