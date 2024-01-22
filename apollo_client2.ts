@@ -7,7 +7,7 @@ import { createClient } from "graphql-ws";
 
 const springServerHost = process.env.NEXT_PUBLIC_SPRING_SERVER_HOST || null;
 const springServerEndpoint = springServerHost ? "http://" + springServerHost + "/graphql" : SPRING_SERVER_ENDPOINT;
-const springServerSubscriptionsEndpoint = springServerHost ? "http://" + springServerHost + "/subscriptions" : SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT;
+const springServerSubscriptionsEndpoint = springServerHost ? "ws://" + springServerHost + "/subscriptions" : SPRING_SERVER_SUBSCRIPTIONS_ENDPOINT;
 
 
 const httpLink = new HttpLink({

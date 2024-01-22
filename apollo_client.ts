@@ -5,8 +5,8 @@ import {NODE_SERVER_ENDPOINT, NODE_SERVER_SUBSCRIPTIONS_ENDPOINT} from "./reques
 
 const nodeServerHost = process.env.NEXT_PUBLIC_NODE_SERVER_HOST || null;
 const nodeServerEndpoint = nodeServerHost ? "http://" + nodeServerHost + "/graphql" : NODE_SERVER_ENDPOINT;
-const nodeServerSubscriptionsEndpoint = nodeServerHost ? "http://" + nodeServerHost + "/subscriptions" : NODE_SERVER_SUBSCRIPTIONS_ENDPOINT;
-
+const nodeServerSubscriptionsEndpoint = nodeServerHost ? "ws://" + nodeServerHost + "/subscriptions" : NODE_SERVER_SUBSCRIPTIONS_ENDPOINT;
+console.log(nodeServerHost)
 export interface Definintion {
     kind: string;
     operation?: string;
