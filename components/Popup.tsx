@@ -27,7 +27,7 @@ export const Popup = (props: PopupProps) => {
     return (
         <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>
             <div style={{position: 'absolute', top: '30%', left: '40vw'}}>
-                <div ref={popupRef} style={{backgroundColor: 'white', height: '3rem', width: '20vw', textAlign: 'center', display: 'table-cell', verticalAlign: 'middle'}}>
+                <div id='popup-message-container' ref={popupRef} style={{backgroundColor: 'white', height: '3rem', width: '20vw', textAlign: 'center', display: 'table-cell', verticalAlign: 'middle'}}>
                     {message}
                 </div>
             </div>

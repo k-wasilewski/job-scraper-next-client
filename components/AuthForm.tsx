@@ -103,7 +103,7 @@ const AuthForm = (props: AuthFormProps) => {
             />
             <br/>
             <br/>
-            <div className="w-50">
+            <div id='switchPageBtn' className="w-50">
                 {switchPageBtn()}
             </div>
 
