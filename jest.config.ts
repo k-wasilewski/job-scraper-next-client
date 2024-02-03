@@ -15,7 +15,8 @@ module.exports = {
     coveragePathIgnorePatterns: [
       "/node_modules/",
     ],
-    testEnvironment: "jsdom"
+    testEnvironment: "jsdom",
+    setupFiles: ["./setup.jest.ts"]
 }
 
 export {}
