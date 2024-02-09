@@ -1,4 +1,4 @@
-FROM node:17 as dependencies
+FROM node:18 as dependencies
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 
-FROM node:17 as builder
+FROM node:18 as builder
 
 WORKDIR /app
 
@@ -19,10 +19,12 @@ COPY --from=dependencies /app/node_modules ./node_modules
 
 # ENV NEXT_PUBLIC_SPRING_SERVER_HOST="192.168.0.8:8081"
 
+RUN yarn test
+
 RUN yarn build
 
 
-FROM node:17 as runner
+FROM node:18 as runner
 
 WORKDIR /app
 
