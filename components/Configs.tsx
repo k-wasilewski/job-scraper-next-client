@@ -4,6 +4,7 @@ import {getScrapeConfigs, modifyScrapeConfig, persistScrapeConfig, removeScrapeC
 import CardHOC from "./CardHOC";
 import { setLoading } from "../redux/slices";
 import { useDispatch } from "react-redux";
+import styles from "../styles/Configs.module.css";
 
 interface ConfigsProps {
     _configs: ScrapeConfig[];
@@ -141,6 +142,22 @@ export const Configs = (props: ConfigsProps) => {
         return (millisInt / (60 * 1000)).toString();
     }
 
+    const rwdButtons = (
+        <>
+            <div className={styles.buttons_small}>
+                <button className='btn btn-light mx-2 my-2 d-block' onClick={handleScrape}>Scrape now!</button>
+                <button className='btn btn-light mx-2 my-2 d-block' onClick={handleAddConfig}>Add config</button>
+                <button className='btn btn-light mx-2 my-2 d-block' onClick={handleModifyConfig}>Modify config</button>
+            </div>
+            
+            <div className={styles.buttons_large}>
+                <button className='btn btn-light mx-2' onClick={handleScrape}>Scrape now!</button>
+                <button className='btn btn-light mx-2' onClick={handleAddConfig}>Add config</button>
+                <button className='btn btn-light mx-2' onClick={handleModifyConfig}>Modify config</button>
+            </div>
+        </>
+    );
+
     const content = (
         <>
             <div className="my-2">
@@ -172,11 +189,7 @@ export const Configs = (props: ConfigsProps) => {
                 <input type='string' value={millisToMin(interval)} onChange={e => setInterval(minToMillis(e.target.value))}/>
             </div>
             
-            <div className="row my-2">
-                <button className='col-1 btn btn-light mx-2' onClick={handleScrape}>Scrape now!</button>
-                <button className='col-1 btn btn-light mx-2' onClick={handleAddConfig}>Add config</button>
-                <button className='col-1 btn btn-light mx-2' onClick={handleModifyConfig}>Modify config</button>
-            </div>
+            {rwdButtons}
         </>
     );
 
