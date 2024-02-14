@@ -122,8 +122,7 @@ const AuthForm = (props: AuthFormProps) => {
                 className={styles.card_hoc_wrapper}
                 body={rwdCardBody()}
             />
-            <br/>
-            <br/>
+            
             <div id='switchPageBtn' className="w-50">
                 {switchPageBtn()}
             </div>

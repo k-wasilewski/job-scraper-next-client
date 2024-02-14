@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { isLoading, selectTheme, setTheme, Theme } from "../redux/slices";
 import styles from "../styles/Navbar.module.css";
-import { useWidth } from "../hooks/useWidth";
+import { useWidth } from "../utils/useWidth";
 
 const Navbar = () => {
     const theme = useSelector(selectTheme);

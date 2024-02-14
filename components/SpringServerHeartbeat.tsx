@@ -22,7 +22,6 @@ export default function SpringServerHeartbeat() {
             data ?
                 <h4>
                     {data.scrapesPerformed}
-                    <br/>
                 </h4>
                 :
                 null

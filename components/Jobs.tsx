@@ -102,9 +102,6 @@ export const Jobs = (props: JobsProps) => {
                 <CardHOC title={<h3>Jobs:</h3>} body={renderJobGroups(groupNames)} />
             </div>
 
-            <br/>
-            <br/>
-
             <PortalComponent
                 renderCondition={!loadingScreenshots}
                 rootElementId={'gallery-portal-container'}

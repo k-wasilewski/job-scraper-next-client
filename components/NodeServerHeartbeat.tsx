@@ -33,9 +33,7 @@ export default function NodeServerHeartbeat() {
             data ?
                 <h4>
                     {data.newJobs.link}
-                    <br/>
                     {data.newJobs.timestamp}
-                    <br/>
                 </h4>
                 :
                 null
