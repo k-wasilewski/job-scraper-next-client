@@ -32,9 +32,7 @@ const Navbar = () => {
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item mx-5">
-                        <Link href="/">
-                            <a className="nav-link">Home</a>
-                        </Link>
+                        <Link className="nav-link" href="/">Home</Link>
                     </li>
                 </ul>
                 <ul className="navbar-nav mx-auto justify-content-center">
@@ -50,9 +48,7 @@ const Navbar = () => {
                             <button style={{fontWeight: theme === Theme.Dark ? 'bold' : 'normal'}} className="dropdown-item" onClick={() => changeTheme(Theme.Dark)}>Dark</button>
                         </div>
                     </li>
-                    <Link href="/login">
-                        <a className="nav-link">Logout</a>
-                    </Link>
+                    <Link className="nav-link" href="/login">Logout</Link>
                 </ul>
             </div>
         </nav>

@@ -5,6 +5,7 @@ import {HeadComponent} from "../components/HeadComponent";
 import CardHOC from '../components/CardHOC';
 import { PortalComponent } from "./PortalComponent";
 import { Popup } from "./Popup";
+import styles from "../styles/AuthForm.module.css";
 
 interface AuthFormProps {
     type: AuthFormType;
@@ -55,9 +56,9 @@ const AuthForm = (props: AuthFormProps) => {
 
     const cardTitle = () => {
         if (type === AuthFormType.Login) {
-            return 'Log in to job-scraper';
+            return <h5>Log in to job-scraper</h5>;  // implement more of h5 headings
         } else if (type === AuthFormType.Register) {
-            return 'Register at job-scraper';
+            return <h5>Register at job-scraper</h5>;
         }
     }
 
@@ -73,33 +74,53 @@ const AuthForm = (props: AuthFormProps) => {
         }
     }
 
+    const rwdCardBody = () => (
+        <>
+            <form className={styles.form_large} onSubmit={handleSubmit}>
+                <div className="row mb-1">
+                    <div className="col-2">
+                        <span className="col-sm">Email:</span>
+                    </div>
+                    <div className="col-1">
+                        <input type='email' onChange={handleEmailChange}/>
+                    </div>
+                </div>
+                <div className="row mb-1">
+                    <div className="col-2">
+                        <span className="col-sm">Password:</span>
+                    </div>
+                    <div className="col-1">
+                        <input type='password' onChange={handlePasswordChange}/>
+                    </div>
+                </div>
+                <button className='btn btn-light' type='submit'>Submit</button>
+            </form>
+
+            <form className={styles.form_small} onSubmit={handleSubmit}>
+                <div className="row mb-1">
+                    <span className="col-sm">Email:</span>
+                    <div className="mx-1">
+                        <input type='email' onChange={handleEmailChange}/>
+                    </div>
+                </div>
+                <div className="row mb-1">
+                    <span className="col-sm">Password:</span>
+                    <div className="mx-1">
+                        <input type='password' onChange={handlePasswordChange}/>
+                    </div>
+                </div>
+                <button className='btn btn-light' type='submit'>Submit</button>
+            </form>
+        </>
+    );
+
     return (
         <div className="d-flex flex-column align-items-center">
             <HeadComponent />
             <CardHOC
                 title={cardTitle()}
-                className="w-50"
-                body={
-                    <form onSubmit={handleSubmit}>
-                        <div className="row mb-1">
-                            <div className="col-2">
-                                <span>Email:</span>
-                            </div>
-                            <div className="col-1">
-                                <input type='email' onChange={handleEmailChange}/>
-                            </div>
-                        </div>
-                        <div className="row mb-1">
-                            <div className="col-2">
-                                <span className="col-sm">Password:</span>
-                            </div>
-                            <div className="col-1">
-                                <input type='password' onChange={handlePasswordChange}/>
-                            </div>
-                        </div>
-                        <button className='btn btn-light' type='submit'>Submit</button>
-                    </form>
-                }
+                className={styles.card_hoc_wrapper}
+                body={rwdCardBody()}
             />
             <br/>
             <br/>
