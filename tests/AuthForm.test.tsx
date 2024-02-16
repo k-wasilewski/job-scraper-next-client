@@ -1,6 +1,6 @@
 import React from 'react';
 import {configure, mount, ReactWrapper} from 'enzyme';
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+import Adapter from "@cfaester/enzyme-adapter-react-18";
 import AuthForm, { AuthFormType } from '../components/AuthForm';
 import CardHOC from '../components/CardHOC';
 import * as requests from "../requests";
@@ -37,8 +37,8 @@ describe("AuthForm spec", () => {
             <AuthForm type={loginType} />
         );
 
-        const titleNode = wrapper.find(CardHOC).find('div.card-title');
-        const switchPageBtnNode = wrapper.find('#switchPageBtn');
+        const titleNode = wrapper.find(CardHOC).find('div.card-title').first();
+        const switchPageBtnNode = wrapper.find('#switchPageBtn').first();
         
         expect(titleNode.text()).toEqual('Log in to job-scraper');
         expect(switchPageBtnNode.text()).toEqual('Register');
@@ -51,8 +51,8 @@ describe("AuthForm spec", () => {
             <AuthForm type={registerType} />
         );
 
-        const titleNode = wrapper.find(CardHOC).find('div.card-title');
-        const switchPageBtnNode = wrapper.find('#switchPageBtn');
+        const titleNode = wrapper.find(CardHOC).find('div.card-title').first();
+        const switchPageBtnNode = wrapper.find('#switchPageBtn').first();
         
         expect(titleNode.text()).toEqual('Register at job-scraper');
         expect(switchPageBtnNode.text()).toEqual('Login');
@@ -67,9 +67,9 @@ describe("AuthForm spec", () => {
             <AuthForm type={loginType} />
         );
 
-        const form = wrapper.find(CardHOC).find('form');
-        const emailInput = form.find('input[type="email"]');
-        const passwordInput = form.find('input[type="password"]');
+        const form = wrapper.find(CardHOC).find('form').first();
+        const emailInput = form.find('input[type="email"]').first();
+        const passwordInput = form.find('input[type="password"]').first();
         
         await act(async () => {
             await emailInput.simulate('change', { target: { value: 'test@test.com' } });
@@ -96,9 +96,9 @@ describe("AuthForm spec", () => {
             <AuthForm type={registerType} />
         );
 
-        const form = wrapper.find(CardHOC).find('form');
-        const emailInput = form.find('input[type="email"]');
-        const passwordInput = form.find('input[type="password"]');
+        const form = wrapper.find(CardHOC).find('form').first();
+        const emailInput = form.find('input[type="email"]').first();
+        const passwordInput = form.find('input[type="password"]').first();
         
         await act(async () => {
             await emailInput.simulate('change', { target: { value: 'test@test.com' } });
@@ -130,9 +130,9 @@ describe("AuthForm spec", () => {
             <AuthForm type={loginType} />
         );
 
-        const form = wrapper.find(CardHOC).find('form');
-        const emailInput = form.find('input[type="email"]');
-        const passwordInput = form.find('input[type="password"]');
+        const form = wrapper.find(CardHOC).find('form').first();
+        const emailInput = form.find('input[type="email"]').first();
+        const passwordInput = form.find('input[type="password"]').first();
 
         expect(document.querySelector('#popup-message-container')).toBeFalsy();
         
@@ -166,9 +166,9 @@ describe("AuthForm spec", () => {
             <AuthForm type={registerType} />
         );
 
-        const form = wrapper.find(CardHOC).find('form');
-        const emailInput = form.find('input[type="email"]');
-        const passwordInput = form.find('input[type="password"]');
+        const form = wrapper.find(CardHOC).find('form').first();
+        const emailInput = form.find('input[type="email"]').first();
+        const passwordInput = form.find('input[type="password"]').first();
 
         expect(document.querySelector('#popup-message-container')).toBeFalsy();
         

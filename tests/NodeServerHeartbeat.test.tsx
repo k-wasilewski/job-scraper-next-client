@@ -1,7 +1,7 @@
 import React from "react";
 import { MockedProvider } from "@apollo/client/testing";
 import {configure, mount, ReactWrapper} from 'enzyme';
-import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
+import Adapter from "@cfaester/enzyme-adapter-react-18";
 import NodeServerHeartbeat from "../components/NodeServerHeartbeat";
 import { gql } from "@apollo/client";
 import { ClientStoreProvider } from "../components/ClientStoreProvider";
