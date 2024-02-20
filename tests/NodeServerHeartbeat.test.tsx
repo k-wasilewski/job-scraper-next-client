@@ -6,16 +6,13 @@ import NodeServerHeartbeat from "../components/NodeServerHeartbeat";
 import { gql } from "@apollo/client";
 import { ClientStoreProvider } from "../components/ClientStoreProvider";
 import CardHOC from "../components/CardHOC";
+import * as reactRedux from "react-redux";
+import { SUBSCRIBE_TO_NEWS } from "../components/NodeServerHeartbeat";
+import * as slices from "../redux/slices";
+import { act } from 'react-dom/test-utils';
 
-const SUBSCRIBE_TO_NEWS = gql`
-  subscription Subscription {
-      newJobs {
-        timestamp,
-        link  
-      }
-    }
-`;
-
+const mockTimestamp = '31-01-2024T16:16:16';
+const mockLink = 'http://myjobhost.com/job-offer';
 const mocks = [
     {
         request: {
@@ -23,7 +20,7 @@ const mocks = [
         },
         result: {
           data: {
-            newJobs: { timestamp: "31-01-2024T16:16:16", link: 'http://myjobhost.com/job-offer' }
+            newJobs: { timestamp: mockTimestamp, link: mockLink }
           }
         }
       }
@@ -31,6 +28,21 @@ const mocks = [
 
 describe('NodeServerHeartbeat spec', () => {
     let wrapper: ReactWrapper;
+    const originalError = console.error;
+
+    beforeAll(() => {
+      console.error = (...args: any[]) => {
+        if (/Warning.*not wrapped in act/.test(args[0])) {
+          return;
+        }
+
+        originalError.call(console, ...args);
+      };
+    });
+
+    afterAll(() => {
+      console.error = originalError;
+    });
 
     beforeEach(() => {
         configure({ adapter: new Adapter() });
@@ -51,4 +63,40 @@ describe('NodeServerHeartbeat spec', () => {
 
         expect(wrapper.exists('.spinner-border')).toBeTruthy();
     });
+
+    it('dispatches a job if new job is present in received data', (done) => {
+      wrapper = mount(
+          <ClientStoreProvider>
+              <MockedProvider mocks={mocks}>
+                  <NodeServerHeartbeat />
+              </MockedProvider>
+          </ClientStoreProvider>
+      );
+
+      const mockDispatch = jest.fn();
+      jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
+      const setJobSpy = jest.spyOn(slices, 'setJob');
+
+      setTimeout(() => {
+        expect(mockDispatch).toHaveBeenCalledTimes(1);
+        expect(setJobSpy).toHaveBeenCalledWith(mockLink);
+        done();
+      }, 500);
+  });
+
+  it('renders job timestamp and link if new job is present in received data', (done) => {
+    wrapper = mount(
+        <ClientStoreProvider>
+            <MockedProvider mocks={mocks}>
+                <NodeServerHeartbeat />
+            </MockedProvider>
+        </ClientStoreProvider>
+    );
+
+    setTimeout(() => {
+      expect(wrapper.text()).toContain(mockTimestamp);
+      expect(wrapper.text()).toContain(mockLink);
+      done();
+    }, 500);
+  });
 });

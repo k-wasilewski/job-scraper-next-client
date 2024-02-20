@@ -6,7 +6,7 @@ import { setJob } from "../redux/slices";
 import { useDispatch } from "react-redux";
 
 // @ts-ignore
-const SUBSCRIBE_TO_NEWS = gql`
+export const SUBSCRIBE_TO_NEWS = gql`
   subscription Subscription {
       newJobs {
         timestamp,
