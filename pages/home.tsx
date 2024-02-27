@@ -69,12 +69,12 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
                 <div className="row">
                     <div className="col-lg">
                         <ApolloProvider client={apollo_client2}>
-                            <SpringServerHeartbeat />
+                            <SpringServerHeartbeat cardClassName={styles.heartbeatCard} />
                         </ApolloProvider>
                     </div>
                     <div className="col-lg">
                         <ApolloProvider client={apollo_client}>
-                            <NodeServerHeartbeat />
+                            <NodeServerHeartbeat cardClassName={styles.heartbeatCard} />
                         </ApolloProvider>
                     </div>
                 </div>

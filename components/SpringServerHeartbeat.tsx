@@ -10,26 +10,27 @@ const SUBSCRIBE_TO_SCRAPES_PERFORMED = gql`
     }
 `;
 
-export default function SpringServerHeartbeat() {
+export default function SpringServerHeartbeat({ cardClassName }) {
     const { data, loading } = useSubscription(
         SUBSCRIBE_TO_SCRAPES_PERFORMED
     );
 
     const subscription_data = (
         loading ?
-            <div className='spinner-border mx-auto'/>
+            <div className='spinner-border mx-auto '/>
             :
             data ?
-                <h4>
+                <h5>
                     {data.scrapesPerformed}
-                </h4>
+                </h5>
                 :
                 null
     );
 
     return (
         <CardHOC 
-            title={<h5>Latest scrape performed at:</h5>} 
+            title={<h5>Latest scrape performed at:</h5>}
+            className={cardClassName}
             body={<small className='d-flex text-muted'>{subscription_data}</small>} 
         />
     );

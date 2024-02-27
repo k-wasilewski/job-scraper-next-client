@@ -115,3 +115,7 @@
     flex-direction: column;
   }
 }
+
+.heartbeatCard {
+  min-height: 100px;
+}

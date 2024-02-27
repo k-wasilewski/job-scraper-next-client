@@ -15,7 +15,7 @@ export const SUBSCRIBE_TO_NEWS = gql`
     }
 `;
 
-export default function NodeServerHeartbeat() {
+export default function NodeServerHeartbeat({ cardClassName }) {
     const { data, loading } = useSubscription(
         SUBSCRIBE_TO_NEWS
     );
@@ -31,17 +31,17 @@ export default function NodeServerHeartbeat() {
             <div className='spinner-border mx-auto '/>
             :
             data ?
-                <h4>
+                <h5>
                     {data.newJobs.link}
-                    {data.newJobs.timestamp}
-                </h4>
+                </h5>
                 :
                 null
     );
 
     return (
       <CardHOC 
-        title={<h5>Latest new job discovered:</h5>} 
+        title={<h5>Latest new job discovered:</h5>}
+        className={cardClassName}
         body={<small className='d-flex text-muted'>{subscription_data}</small>} 
       />
     );

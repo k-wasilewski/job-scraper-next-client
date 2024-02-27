@@ -10,7 +10,7 @@ const CardHOC = (props: CardHOCProps) => {
     const {title, body, className} = props;
 
     return (
-        <div className={'card m-2 ' + className}>
+        <div className={'card m-2 ' + (className || '')}>
             <div className="card-body">
                 <div className="card-title">
                     {title}
