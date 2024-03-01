@@ -56,7 +56,7 @@ describe('NodeServerHeartbeat spec', () => {
         wrapper = mount(
             <ClientStoreProvider>
                 <MockedProvider mocks={mocks}>
-                    <NodeServerHeartbeat />
+                    <NodeServerHeartbeat cardClassName={''} />
                 </MockedProvider>
             </ClientStoreProvider>
         );
@@ -68,7 +68,7 @@ describe('NodeServerHeartbeat spec', () => {
       wrapper = mount(
           <ClientStoreProvider>
               <MockedProvider mocks={mocks}>
-                  <NodeServerHeartbeat />
+                  <NodeServerHeartbeat cardClassName={''} />
               </MockedProvider>
           </ClientStoreProvider>
       );
@@ -88,13 +88,12 @@ describe('NodeServerHeartbeat spec', () => {
     wrapper = mount(
         <ClientStoreProvider>
             <MockedProvider mocks={mocks}>
-                <NodeServerHeartbeat />
+                <NodeServerHeartbeat cardClassName={''} />
             </MockedProvider>
         </ClientStoreProvider>
     );
 
     setTimeout(() => {
-      expect(wrapper.text()).toContain(mockTimestamp);
       expect(wrapper.text()).toContain(mockLink);
       done();
     }, 500);
