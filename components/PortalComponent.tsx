@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {createWrapperAndAppendToBody} from "../utils/createPortal";
 import ReactDOM from "react-dom";
 
@@ -11,17 +11,19 @@ interface PortalComponentProps {
 export const PortalComponent = (props: PortalComponentProps) => {
     const { renderCondition, rootElementId, element } = props;
 
-    const portalRootElement = process.browser ? document.getElementById(rootElementId) : null;
+    const [portalRootElement, setPortalRootElement] = useState(
+        process.browser ? document.getElementById(rootElementId) : null
+    );
 
     useEffect(() => {
-        if (renderCondition) {
-            if (!portalRootElement) createWrapperAndAppendToBody(rootElementId);
+        if (renderCondition && process.browser) {
+            if (portalRootElement === null) setPortalRootElement(createWrapperAndAppendToBody(rootElementId));
         }
     }, [renderCondition]);
 
     return (
         <>
-            {renderCondition && process.browser && portalRootElement && ReactDOM.createPortal(
+            {renderCondition && process.browser && portalRootElement !== null && ReactDOM.createPortal(
                 element,
                 portalRootElement
             )}

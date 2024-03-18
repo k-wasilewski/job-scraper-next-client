@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {configure, mount, ReactWrapper} from 'enzyme';
 import { Popup } from '../components/Popup';
 import Adapter from "@cfaester/enzyme-adapter-react-18";
