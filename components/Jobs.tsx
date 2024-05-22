@@ -27,13 +27,14 @@ export const Jobs = (props: JobsProps) => {
     const [activeGroup, setActiveGroup] = useState('');
     const [jobs, setJobs] = useState([]);
     const [loadingScreenshots, setLoadingScreenshots] = useState(false);
+    const [galleryVisible, setGalleryVisible] = useState(true);
 
     const newJob = useSelector(selectJob);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getJobGroupNames(true, null, nodeServerHost).then(resp => {
+        !process.env.NEXT_PUBLIC_LOCAL && getJobGroupNames(true, null, nodeServerHost).then(resp => {
             if (resp.status === 200 && resp.data.data && resp.data.data.getGroupNames && resp.data.data.getGroupNames.names) {
                 const gn = resp.data.data.getGroupNames.names;
                 setGroupNames(gn);
@@ -46,8 +47,8 @@ export const Jobs = (props: JobsProps) => {
             {groupNames && groupNames.map((group, i) => (
                 <div key={`job-group-${i}`}>
                     <span className="lead d-inline-block" style={{width: '300px'}}>{group}</span>
-                    <button className='btn btn-light mx-4' key={i} onClick={() => handleJobGroupChange(group)}>View jobs</button>
-                    <button className='btn btn-light mx-4' key={i} onClick={() => removeJobGroup(group)}>Remove all</button>
+                    <button className='btn btn-light mx-4' id='view-jobs-btn' key={`view-${i}`} onClick={() => handleJobGroupChange(group)}>View jobs</button>
+                    <button className='btn btn-light mx-4' key={`remove-${i}`} onClick={() => removeJobGroup(group)}>Remove all</button>
                 </div>
             ))}
         </>
@@ -56,14 +57,32 @@ export const Jobs = (props: JobsProps) => {
     const handleJobGroupChange = (group: string) => {
         setLoadingScreenshots(true);
         dispatch(setLoading(true));
-        getJobsByGroup(group, nodeServerHost).then(resp => {
-            if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.length) {
-                setJobs(resp.data.data.getScreenshotsByGroup);
-                setActiveGroup(group);
-                setLoadingScreenshots(false);
-            }
-        }).catch(e => console.log(e))
-        .finally(() => dispatch(setLoading(false)));
+        if (process.env.NEXT_PUBLIC_LOCAL) {
+            setJobs([
+                {
+                    name: 'field',
+                    link: 'https://images.pexels.com/photos/388415/pexels-photo-388415.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
+                },
+                {
+                    name: 'pengiun',
+                    link: 'https://www.kaleidoscope.com.au/assets/full/FM3126.jpg?20210309030611'
+                },
+            ]);
+            setActiveGroup(group);
+            setLoadingScreenshots(false);
+            dispatch(setLoading(false));
+            setGalleryVisible(true);
+        } else {
+            getJobsByGroup(group, nodeServerHost).then(resp => {
+                if (resp.status === 200 && resp.data.data && resp.data.data.getScreenshotsByGroup && resp.data.data.getScreenshotsByGroup.length) {
+                    setJobs(resp.data.data.getScreenshotsByGroup);
+                    setActiveGroup(group);
+                    setLoadingScreenshots(false);
+                    setGalleryVisible(true);  
+                }
+            }).catch(e => console.log(e))
+            .finally(() => dispatch(setLoading(false)));
+        }
     }
 
     const removeJobGroup = (groupName: string) => {
@@ -93,6 +112,14 @@ export const Jobs = (props: JobsProps) => {
         .finally(() => dispatch(setLoading(false)));
     }
 
+    const constructImageSrc = (job: { name: string, link: string }) => {
+        if (process.env.NEXT_PUBLIC_LOCAL) {
+            return job.link;
+        } else {
+            return `http://${nodeServerHost}/screenshots/${currentUserUuid}/${activeGroup}/${job.name}.png`;
+        }
+    }
+
     return (
         <>
             <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#job-offers">
@@ -103,18 +130,19 @@ export const Jobs = (props: JobsProps) => {
             </div>
 
             <PortalComponent
-                renderCondition={!loadingScreenshots}
+                renderCondition={!loadingScreenshots && galleryVisible}
                 rootElementId={'gallery-portal-container'}
                 element={
                     <ImageGallery
                         images={jobs.map(job => ({
-                            src: `http://${nodeServerHost}/screenshots/${currentUserUuid}/${activeGroup}/${job.name}.png`,
+                            src: constructImageSrc(job),
                             onDelete: () => removeJob(job.name),
                             link: job.link
                         }))}
                         onClose={() => {
                             setActiveGroup('')
                             setJobs([]);
+                            setGalleryVisible(false);
                         }}
                     />
                 }

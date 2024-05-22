@@ -11,7 +11,15 @@ const SUBSCRIBE_TO_SCRAPES_PERFORMED = gql`
 `;
 
 export default function SpringServerHeartbeat({ cardClassName }) {
-    const { data, loading } = useSubscription(
+    const { data, loading } = process.env.NEXT_PUBLIC_LOCAL ?
+    {
+        data: {
+            scrapesPerformed: new Date().toDateString()
+        },
+        loading: false
+    }
+    :
+    useSubscription(
         SUBSCRIBE_TO_SCRAPES_PERFORMED
     );
 

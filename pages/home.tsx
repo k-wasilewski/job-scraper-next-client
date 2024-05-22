@@ -48,7 +48,7 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
     const isDark = theme === Theme.Dark;
 
     useEffect(() => {
-        if (!_auth) logout();
+        if (!process.env.NEXT_PUBLIC_LOCAL && !_auth) logout();
     }, [router, _auth]);
 
     useEffect(() => {

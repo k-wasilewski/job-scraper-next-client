@@ -19,10 +19,11 @@ export const ImageGallery = (props: ImageGalleryProps) => {
     useLayoutEffect(() => {
         window.addEventListener('click', (e: MouseEvent) => {
             const targetElement = e.target as HTMLElement;
-            if (imgRef.current && !imgRef.current.contains(targetElement) &&
-                arrowLeftRef && arrowLeftRef.current.innerHTML !== targetElement.innerHTML &&
-                arrowRightRef && arrowRightRef.current.innerHTML !== targetElement.innerHTML) {
-                setCurrentIndex(-1);
+
+            if (targetElement.id !== 'view-jobs-btn' && imgRef.current && 
+                !imgRef.current.contains(targetElement) &&
+                arrowLeftRef.current && arrowLeftRef.current.innerHTML !== targetElement.innerHTML &&
+                arrowRightRef.current && arrowRightRef.current.innerHTML !== targetElement.innerHTML) {
                 onClose();
             }
         });
@@ -30,7 +31,6 @@ export const ImageGallery = (props: ImageGalleryProps) => {
             if (e.key === 'ArrowRight' && images.length) setNextImage();
             else if (e.key === 'ArrowLeft' && images.length) setPrevImage();
             else if (e.key === 'Escape') {
-                setCurrentIndex(-1);
                 onClose();
             }
         });
@@ -40,7 +40,7 @@ export const ImageGallery = (props: ImageGalleryProps) => {
         <>
             {images && images.length ? images.map((image, i) => {
                 if (i===currentIndex) return (
-                    <div style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh'}}>
+                    <div key={`image-${i}`} style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', minHeight: '100vh', maxWidth: '100vw' }}>
                         <button className='btn btn-light my-3' style={{margin: '0 auto', display: 'table'}} onClick={() => image.onDelete()}>Remove</button>
 
                         <img alt='prevImage' onClick={setPrevImage} src={arrowLeft.src} ref={arrowLeftRef} style={{position: 'fixed', width: '50px', filter: 'invert(100%)', top: '50%', left: '1%', cursor: 'pointer'}} />

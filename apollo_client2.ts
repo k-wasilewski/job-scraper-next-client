@@ -14,12 +14,12 @@ const httpLink = new HttpLink({
     uri: springServerEndpoint,
 });
 
-const wsLink = process.browser ? new GraphQLWsLink(createClient({
+const wsLink = (process.browser && !process.env.NEXT_PUBLIC_LOCAL) ? new GraphQLWsLink(createClient({
     url: springServerSubscriptionsEndpoint,
     shouldRetry: () => true
 })) : null;
 
-const link = process.browser ? split(
+const link = (process.browser && !process.env.NEXT_PUBLIC_LOCAL) ? split(
     ({ query }) => {
         const { kind, operation }: Definintion = getMainDefinition(query);
         return kind === 'OperationDefinition' && operation === 'subscription';

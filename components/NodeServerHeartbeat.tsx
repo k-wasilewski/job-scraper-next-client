@@ -16,14 +16,24 @@ export const SUBSCRIBE_TO_NEWS = gql`
 `;
 
 export default function NodeServerHeartbeat({ cardClassName }) {
-    const { data, loading } = useSubscription(
+    const { data, loading } = process.env.NEXT_PUBLIC_LOCAL ? 
+    {
+      data: {
+        newJobs: {
+          link: 'https://justjoin.it/remote/javascript'
+        }
+      },
+      loading: false
+    } 
+    : 
+    useSubscription(
         SUBSCRIBE_TO_NEWS
     );
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-      !loading && data && data.newJobs && data.newJobs.link && dispatch(setJob(data.newJobs.link));
+      !process.env.NEXT_PUBLIC_LOCAL && !loading && data && data.newJobs && data.newJobs.link && dispatch(setJob(data.newJobs.link));
     }, [data]);
 
     const subscription_data = (
