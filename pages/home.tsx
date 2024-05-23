@@ -64,20 +64,22 @@ const Home: NextPage<HomeProps> = (props: HomeProps) => {
     return (
         <div className={`${styles.container} ${isDark ? 'bg-dark' : ''}`}>
             <HeadComponent />
+            <Navbar/>
             <main>
-                <Navbar/>
-                <div className="row">
-                    <div className="col-lg">
-                        <ApolloProvider client={apollo_client2}>
-                            <SpringServerHeartbeat cardClassName={styles.heartbeatCard} />
-                        </ApolloProvider>
+                <section aria-label="Notifications">
+                    <div className="row">
+                        <section aria-label="Latest scrape performed" className="col-lg">
+                            <ApolloProvider client={apollo_client2}>
+                                <SpringServerHeartbeat cardClassName={styles.heartbeatCard} />
+                            </ApolloProvider>
+                        </section>
+                        <section aria-label="Latest new job found" className="col-lg">
+                            <ApolloProvider client={apollo_client}>
+                                <NodeServerHeartbeat cardClassName={styles.heartbeatCard} />
+                            </ApolloProvider>
+                        </section>
                     </div>
-                    <div className="col-lg">
-                        <ApolloProvider client={apollo_client}>
-                            <NodeServerHeartbeat cardClassName={styles.heartbeatCard} />
-                        </ApolloProvider>
-                    </div>
-                </div>
+                </section>
 
                 <Configs _configs={_configs} setPopupMessage={setPopupMessage} nodeServerHost={nodeServerHost} springServerHost={springServerHost} />
 

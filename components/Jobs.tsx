@@ -43,15 +43,15 @@ export const Jobs = (props: JobsProps) => {
     }, [newJob]);
 
     const renderJobGroups = (groupNames: string[]) => (
-        <>
+        <ul>
             {groupNames && groupNames.map((group, i) => (
-                <div key={`job-group-${i}`}>
+                <li key={`job-group-${i}`}>
                     <span className="lead d-inline-block" style={{width: '300px'}}>{group}</span>
-                    <button className='btn btn-light mx-4' id='view-jobs-btn' key={`view-${i}`} onClick={() => handleJobGroupChange(group)}>View jobs</button>
+                    <button className='btn btn-light mx-4' key={`view-${i}`} onClick={() => handleJobGroupChange(group)}>View jobs</button>
                     <button className='btn btn-light mx-4' key={`remove-${i}`} onClick={() => removeJobGroup(group)}>Remove all</button>
-                </div>
+                </li>
             ))}
-        </>
+        </ul>
     );
 
     const handleJobGroupChange = (group: string) => {
@@ -121,7 +121,7 @@ export const Jobs = (props: JobsProps) => {
     }
 
     return (
-        <>
+        <section aria-label="Jobs">
             <button className="btn btn-light d-block my-2" data-bs-toggle="collapse" data-bs-target="#job-offers">
                 Jobs
             </button>
@@ -147,6 +147,6 @@ export const Jobs = (props: JobsProps) => {
                     />
                 }
             />
-        </>
+        </section>
     );
 };

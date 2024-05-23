@@ -33,22 +33,22 @@ const Navbar = () => {
 
     return (
         <nav className={`navbar navbar-expand-lg navbar-${isDark ? 'dark' : 'light'}`}>
-            <a className={`navbar-brand ${isDark ? 'text-white' : ''}`}>job-scraper</a>
+            <a aria-label='Title' className={`navbar-brand ${isDark ? 'text-white' : ''}`}>job-scraper</a>
 
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span className="navbar-toggler-icon"></span>
             </button>
 
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul className="navbar-nav mr-auto">
+                <ul aria-label='Links' className="navbar-nav mr-auto">
                     <li className="nav-item mx-5">
                         <Link className="nav-link" href="/">Home</Link>
                     </li>
                 </ul>
-                <ul className="navbar-nav mx-auto justify-content-center">
-                    {loading && loader}
-                </ul>
-                <ul className="navbar-nav justify-content-end ms-auto">
+                {loading && <ul aria-label='Loading' className="navbar-nav mx-auto justify-content-center">
+                    {loader}
+                </ul>}
+                <ul aria-label='Profile' className="navbar-nav justify-content-end ms-auto">
                     <li className={`nav-item btn-group ${dropdownClass()} mx-5 ${styles.theme_dropdown}`}>
                         <a className="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             Theme
@@ -58,7 +58,9 @@ const Navbar = () => {
                             <button style={{fontWeight: theme === Theme.Dark ? 'bold' : 'normal'}} className="dropdown-item" onClick={() => changeTheme(Theme.Dark)}>Dark</button>
                         </div>
                     </li>
-                    <Link className="nav-link" href="/login">Logout</Link>
+                    <li>
+                        <Link className="nav-link" href="/login">Logout</Link>
+                    </li>
                 </ul>
             </div>
         </nav>
